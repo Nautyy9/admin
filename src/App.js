@@ -11,8 +11,11 @@ import { focusHandling } from 'cruip-js-toolkit';
 import './charts/ChartjsConfig';
 
 // Import pages
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-
+import Customer from './pages/Customer';
+import Order from './pages/Order';
+import EntryAndExit from './pages/EntryAndExit';
 
 function App() {
 
@@ -28,8 +31,10 @@ function App() {
   return (
     <>
       <Switch>
-        <Route exact path="/" component={Dashboard}/>
-        {/* <Route path="/customers" component={CustomerDetail}/> */}
+        <Route exact path="/" component={Login}/>
+        <Route path="/customers" component={Customer}/>
+        <Route path="/orders" component={Order}/>
+        <Route path="/entryexit" component={EntryAndExit}/>
       </Switch>
     </>
   );

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "deerika-smart-store-rdb",
+  "private_key_id": "68868a5acb74ad439dc07118b89f2a72917a0af7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCW2anUJfdIki7E\nLGYJoh+FclllCoNbok2eR7MHKRykXWRGND1mT8+3U1MCDVAwEAmrrJHUHND4Qwi4\ndveyVqLXRBUpzBWDtE1LvqWhsc0yaI7bthmviTmfRiBBsKtKXWRbTc2jJ8lep8YX\neuJ2ooHttW2uv9v8y0oJxGbyj1OG405vnm9DywGecfzdLyqvG3Ka2GFU3cvzJyrQ\nkUSkKE1Q/8sQhgKpwog2ap83ttxZDHBP9Fr50sJ6Z1M53+mZgw3XxPUGQ14nEC2N\narTGD+Co97+6Fp9MX/e8rdLFTIsyobSIcFrruSuDZJBBHjrW+pa+woCCumD97F1T\nYJn2ol5/AgMBAAECggEACGKjERrnKw6NMPRy25g6flWD6Jzz/lUAUYsUxZIgeHaE\ni25990D6f+tO0u9ghLtvfi6CkLLlXteDFZXvYOd199deAcvJal/MaCh51oomqOWt\nA0OVG+/Z1yOzyVMDwod8e6LQioA8rllPJqD7E7Mm28rZBPy/QsceH3reah9Tekz0\netk5j7LhjPjrc92PfKDF8mX0EovBsaEjqXX9oq0G7y+Lw3QbrPwxgi9qLpLBxmDz\nPspgABg+P8cJ1rIa0LYCU9wvUhZ0IrkXbCR8fhpdDM5gbBiKzlBTE1UfLDCuKSCy\n/zbxcfmGRXxBkdhfwglwXSWBimtXSmv7CG1shrkwuQKBgQDSDIMed8o6ZOCgRWvI\nrx5R3I3zw2X4sHqAHSX366YReKaau/uGTPSY0lIEeKf8IwVmTkpE/H97U7XagYQI\nlzGwjRhXzZB7+65v/uG9PTtPhFKx22xVPcnIJ32czMgtkz9bXzYdb/2SuXrshgbz\nc5BAnL9U0NZV0gr4/vzokOm0VQKBgQC32dECcwIGjM6J3OjiF5Tx3CnJ8MTBhluf\nfEe8Q/OcCD1vXTGDPhrZFpd9TaTPsAngWoO7ck+HhMRU1Hi5h37B3BnNwpZ6XZwy\nQv/Sdbn+VWIjsOu4HNe42PyYikVgqGOIvbdHC8rCG5oEjuTaBEDrEV372FZ3aBWS\nZjTTMA27gwKBgD28S7Viw99R0uuIO9uqDKFGz7n7jjb/t6F777LkYdT0vxLveUfJ\nyoI4Hr8Nr2Hd8TJWhGGuTNG0kth8BJB5z7LyZVs5IeQu3uAv660xGAORArUfpsGO\n/YWEhdjWH2e1xYNXgpI4XjEHrudhpR1cs+MprtqA3t4uc+cnGrJIFUhZAoGBALCk\n32TzC2cvsuJTFo7lCX64go48f09RwIaj6mjBATdR03VEnWX0LeeXBUana0sBYPvm\n+9sGIdObhOfcnYHk5a1txH0mEV7QwlqodRPJeUMc1oZkXpcvXzWDhm8pqy8Lm1au\nsYHZmp6V1o26nbe7joRM03g+jBV+M/vNp8Oh0A/xAoGAZaGnPWt5vV7NDkcq/1Xi\nqCI0cFdDZuLhdb3AU1UM/kXtGTv3mNPmGjd/PQZXNEsY2qS6nfiIvRHCxvrtUKJw\nPAaC6RI6kQV6nmklw3kAsXCZYLlrWQd81b9yQGjgeteG3lrgJfvr+c7J4Q+CWExl\nMnhKLLXKsZOFmpdbPdt220s=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-z9vap@deerika-smart-store-rdb.iam.gserviceaccount.com",
+  "client_id": "107935646971130784037",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-z9vap%40deerika-smart-store-rdb.iam.gserviceaccount.com"
+}
