@@ -1,7 +1,10 @@
 const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
+const enableWs = require('express-ws')
+
 const app = express();
+// enableWs(app)
 const port = 8080;
 app.use(cors({ origin: true }));
 
@@ -16,12 +19,14 @@ admin.initializeApp({
 const db = admin.database()
 const shelfCollection = 'dummydata/smart-shelves';
 
+// admin.database.enableLogging(true)
+
 app.get('/shelves', async (req, res) => {
     try {
         const ref = db.ref(shelfCollection);
         const users = [];
         ref.on('value',(snapshot)=>{
-            console.log(snapshot.val().key)
+            console.log(snapshot.val())
             users.push(snapshot.val())
         })
         res.status(200).json(users);

@@ -4,7 +4,7 @@ import {
   Route,
   useLocation
 } from 'react-router-dom';
-
+import { firebase } from "./initFirebase";
 import './css/style.scss';
 
 import { focusHandling } from 'cruip-js-toolkit';
@@ -14,12 +14,14 @@ import './charts/ChartjsConfig';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Customer from './pages/Customer';
-import Order from './pages/Order';
+import Shelves from './pages/Shelves';
 import EntryAndExit from './pages/EntryAndExit';
 
 function App() {
 
   const location = useLocation();
+
+  console.log(firebase.auth().currentUser)
 
   useEffect(() => {
     document.querySelector('html').style.scrollBehavior = 'auto'
@@ -33,7 +35,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={Login}/>
         <Route path="/customers" component={Customer}/>
-        <Route path="/orders" component={Order}/>
+        <Route path="/shelves" component={Shelves}/>
         <Route path="/entryexit" component={EntryAndExit}/>
       </Switch>
     </>

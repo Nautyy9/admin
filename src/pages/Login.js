@@ -1,6 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { firebase } from "../initFirebase"
 
 export default function Login() {
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+
+  const firebaseLogin = () => {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      var user = userCredential.user;
+      console.log(userCredential)
+      // ...
+    })
+    .catch((error) => {
+      console.log(error.message)
+      // var errorCode = error.code;
+      // var errorMessage = error.message;
+    });
+  }
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    if(email && password){
+      firebaseLogin()
+    }
+  }
   return (
     <>
       <main>
@@ -22,6 +47,8 @@ export default function Login() {
                           type="email"
                           className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full"
                           placeholder="Email"
+                          value={email}
+                          onChange={(e)=>{setEmail(e.target.value)}}
                           style={{ transition: "all .15s ease" }}
                         />
                       </div>
@@ -37,12 +64,16 @@ export default function Login() {
                           type="password"
                           className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full"
                           placeholder="Password"
+                          value={password}
+                          onChange={(e)=>{setPassword(e.target.value)}}
                           style={{ transition: "all .15s ease" }}
                         />
                       </div>
 
                       <div className="text-center mt-6">
-                        <button className="btn px-3 py-3 bg-indigo-500 hover:bg-indigo-600 text-white w-full focus:ring-indigo-800">
+                        <button 
+                          onClick={handleLogin}
+                          className="btn px-3 py-3 bg-indigo-500 hover:bg-indigo-600 text-white w-full focus:ring-indigo-800">
                             Log In
                         </button> 
                       </div>
