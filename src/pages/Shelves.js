@@ -13,6 +13,7 @@ const db = firebase.database()
 function Shelves() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ShelfData, setShelfData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   console.log('counter')
 
@@ -25,6 +26,7 @@ function Shelves() {
       })
     })
     console.log(result)
+    setIsLoading(prev=>!prev)
     setShelfData(result)
   }
 
@@ -45,6 +47,7 @@ function Shelves() {
   }
 
   useEffect(()=>{
+    setIsLoading(prev=>!prev)
     fetchShelfData()
   },[])
 
@@ -81,6 +84,7 @@ function Shelves() {
                 label="Shelf Details"
                 headers={headers}
                 data={ShelfData}
+                isLoading={isLoading}
               />
             </div>
 

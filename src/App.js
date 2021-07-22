@@ -5,10 +5,12 @@ import {
   useLocation
 } from 'react-router-dom';
 import { firebase } from "./initFirebase";
+import PrivateRoute from './utils/PrivateRoute';
 import './css/style.scss';
 
 import { focusHandling } from 'cruip-js-toolkit';
 import './charts/ChartjsConfig';
+import { AuthProvider } from './context/auth';
 
 // Import pages
 import Login from './pages/Login';
@@ -32,12 +34,15 @@ function App() {
 
   return (
     <>
-      <Switch>
-        <Route exact path="/" component={Login}/>
-        <Route path="/customers" component={Customer}/>
-        <Route path="/shelves" component={Shelves}/>
-        <Route path="/entryexit" component={EntryAndExit}/>
-      </Switch>
+      <AuthProvider>
+        <Switch>
+          <PrivateRoute exact path="/" component={Dashboard} type="private"/>
+          <PrivateRoute path="/login" component={Login} type="guest"/>
+          <PrivateRoute path="/customers" component={Customer} type="private"/>
+          <PrivateRoute path="/shelves" component={Shelves} type="private"/>
+          <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
+        </Switch>
+      </AuthProvider>
     </>
   );
 }

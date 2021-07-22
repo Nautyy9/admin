@@ -1,23 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { withRouter, Redirect } from "react-router-dom";
 import { firebase } from "../initFirebase"
+import { AuthContext } from "../context/auth";
 
-export default function Login() {
+function Login({history}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
 
-  const firebaseLogin = () => {
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in
-      var user = userCredential.user;
-      console.log(userCredential)
-      // ...
-    })
-    .catch((error) => {
-      console.log(error.message)
-      // var errorCode = error.code;
-      // var errorMessage = error.message;
-    });
+  const firebaseLogin = async () => {
+    try{
+      const response = await firebase.auth().signInWithEmailAndPassword(email, password)
+      console.log(response)
+      history.push("/shelves")
+    }
+    catch(error){
+      console.error(error)
+    }   
+  }
+  const data = useContext(AuthContext)
+  console.log("Context",data)
+
+  const { currentUser } = useContext(AuthContext);
+
+  if (currentUser) {
+    return <Redirect to="/shelves" />;
   }
 
   const handleLogin = (e) => {
@@ -88,3 +94,5 @@ export default function Login() {
     </>
   );
 }
+
+export default withRouter(Login)

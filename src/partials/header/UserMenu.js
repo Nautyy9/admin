@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Transition from '../../utils/Transition';
-
+import { firebase } from "../../initFirebase";
 import UserAvatar from '../../images/user-avatar-32.png';
 
 function UserMenu() {
@@ -82,7 +82,7 @@ function UserMenu() {
               <Link
                 className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
                 to="/"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={() => firebase.auth().signOut()}
               >
                 Sign Out
               </Link>
