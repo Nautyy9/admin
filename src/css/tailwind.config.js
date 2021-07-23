@@ -60,6 +60,7 @@ module.exports = {
       margin: ['first', 'last'],
       borderWidth: ['first', 'last'],
       padding: ['first', 'last'],
+      opacity:['disabled']
     },
   },
   plugins: [

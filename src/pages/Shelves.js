@@ -15,8 +15,6 @@ function Shelves() {
   const [ShelfData, setShelfData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
-  console.log('counter')
-
   const transformData = (data) =>{
     const result = []
     Object.keys(data).map(each=>{

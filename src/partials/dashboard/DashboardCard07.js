@@ -21,7 +21,7 @@ function DashboardCard07({label,headers,data,isLoading}) {
               <tr>
                 {
                   Object.keys(headers).map(header=>(
-                    <th className="p-2">
+                    <th className="p-2" key={header}>
                       <div className="font-semibold text-left">{header}</div>
                     </th>
                   ))
@@ -32,11 +32,11 @@ function DashboardCard07({label,headers,data,isLoading}) {
             <tbody className="text-sm font-medium divide-y divide-gray-100">
               {/* Row */}
               { 
-                data.map(result=>(
-                  <tr>
+                data && data.map((result,index)=>(
+                  <tr key={index}>
                     { 
                       Object.keys(headers).map(column=>(
-                        <td className="p-2">
+                        <td className="p-2" key={column}>
                           <div className="text-gray-800">{result.data[headers[column]]}</div>
                         </td> 
                       ))

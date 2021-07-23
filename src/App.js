@@ -18,6 +18,7 @@ import Dashboard from './pages/Dashboard';
 import Customer from './pages/Customer';
 import Shelves from './pages/Shelves';
 import EntryAndExit from './pages/EntryAndExit';
+import Team from './pages/Team';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <PrivateRoute path="/customers" component={Customer} type="private"/>
           <PrivateRoute path="/shelves" component={Shelves} type="private"/>
           <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
+          <PrivateRoute path="/team" component={Team} type="private"/>
         </Switch>
       </AuthProvider>
     </>

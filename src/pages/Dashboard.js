@@ -76,7 +76,7 @@ function Dashboard() {
               {/* Line chart (Acme Professional) */}
               {/* <DashboardCard03 /> */}
               {/* Bar chart (Direct vs Indirect) */}
-              {/* <DashboardCard04 /> */}
+              <DashboardCard04 />
               {/* Line chart (Real Time Value) */}
               {/* <DashboardCard05 /> */}
               {/* Doughnut chart (Top Countries) */}
