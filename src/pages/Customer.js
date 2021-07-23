@@ -80,7 +80,7 @@ function Customer() {
                   label="Customer Details"
                   headers={headers}
                   data={customerData}
-                  isLoading={isLoading}
+                  isLoading={false}
                 />
               </div>
             </div>

@@ -82,7 +82,7 @@ function Shelves() {
                 label="Shelf Details"
                 headers={headers}
                 data={ShelfData}
-                isLoading={isLoading}
+                isLoading={false}
               />
             </div>
 
