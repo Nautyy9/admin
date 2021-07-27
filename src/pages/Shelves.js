@@ -24,7 +24,6 @@ function Shelves() {
       })
     })
     console.log(result)
-    setIsLoading(prev=>!prev)
     setShelfData(result)
   }
 
@@ -45,8 +44,9 @@ function Shelves() {
   }
 
   useEffect(()=>{
-    setIsLoading(prev=>!prev)
+    setIsLoading(true)
     fetchShelfData()
+    setIsLoading(false)
   },[])
 
   const headers = {
@@ -82,7 +82,7 @@ function Shelves() {
                 label="Shelf Details"
                 headers={headers}
                 data={ShelfData}
-                isLoading={false}
+                isLoading={isLoading}
               />
             </div>
 

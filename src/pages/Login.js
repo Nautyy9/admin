@@ -17,8 +17,7 @@ function Login({history}) {
       console.error(error)
     }   
   }
-  const data = useContext(AuthContext)
-  console.log("Context",data)
+ 
 
   const { currentUser } = useContext(AuthContext);
 

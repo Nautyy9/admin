@@ -23,7 +23,6 @@ function Customer() {
       })
     })
     console.log(result)
-    setIsLoading(prev=>!prev)
     setCustomerData(result)
   }
 
@@ -45,6 +44,7 @@ function Customer() {
   useEffect(()=>{
     setIsLoading(prev=>!prev)
     fetchCustomerData()
+    setIsLoading(prev=>!prev)
   },[])
 
   const headers = {
@@ -80,7 +80,7 @@ function Customer() {
                   label="Customer Details"
                   headers={headers}
                   data={customerData}
-                  isLoading={false}
+                  isLoading={isLoading}
                 />
               </div>
             </div>

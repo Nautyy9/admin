@@ -7,6 +7,28 @@ function AddTeam({history}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
 
+  const setRoleForUser = (user) => {
+    
+  } 
+
+  const addUser = async () => {
+    try{
+      const response = await firebase.auth().createUserWithEmailAndPassword(email, password)
+      console.log('add team',response)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
+  const handleAddUser = (e) => {
+    e.preventDefault()
+    if(email && password) {
+      addUser()
+    }
+  }
+
+
   return (
     <>
       <main>
@@ -53,6 +75,7 @@ function AddTeam({history}) {
 
                       <div className="text-center mt-6">
                         <button 
+                          onClick={handleAddUser}
                           className="btn uppercase px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white focus:ring-indigo-800">
                             Add
                         </button> 

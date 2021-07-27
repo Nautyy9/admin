@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
               // Note this is always triggered on first call. Further optimization could be
               // added to avoid the initial trigger when the token is issued and already contains
               // the latest claims.
+              console.log('snapshot',snapshot)
               user.getIdToken(true);
             };
             // Subscribe new listener to changes on that node.
@@ -36,6 +37,27 @@ export const AuthProvider = ({ children }) => {
           }
       });
   }, []);
+
+  useEffect(()=>{
+    if(currentUser){
+      firebase.auth().currentUser.getIdTokenResult()
+      .then((idTokenResult) => {
+        // Confirm the user is an Admin.
+        if (!!idTokenResult.claims.role) {
+          // Show admin UI.
+          setRole('admin')
+          console.log("claims",idTokenResult.claims)
+        } else {
+          // Show regular user UI.
+          setRole('superuser')
+          console.log('superuser')
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  },[currentUser])
 
   if(pending){
     return (
@@ -48,7 +70,8 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        currentUser
+        currentUser,
+        role
       }}
     >
       {children}
