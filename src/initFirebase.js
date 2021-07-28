@@ -15,4 +15,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig)
 
-export { firebase }
+const secondaryFirebase = firebase.initializeApp(firebaseConfig,"Secondary")
+
+export { firebase,secondaryFirebase }

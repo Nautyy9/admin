@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import SearchModal from './header/SearchModal';
 import Notifications from './header/Notifications';
 import Help from './header/Help';
 import UserMenu from './header/UserMenu';
+import { AuthContext } from '../context/auth';
 
-function Header({
-  sidebarOpen,
-  setSidebarOpen
-}) {
+function Header({sidebarOpen,setSidebarOpen}) {
+  const {currentUser} = useContext(AuthContext)
   return (
     <header className="sticky top-0 bg-white border-b border-gray-200 z-30">
       <div className="px-4 sm:px-6 lg:px-8">
@@ -41,7 +40,7 @@ function Header({
             {/* <Help /> */}
             {/*  Divider */}
             <hr className="w-px h-6 bg-gray-200 mx-3" />
-            <UserMenu />
+            <UserMenu user={currentUser}/>
 
           </div>
 

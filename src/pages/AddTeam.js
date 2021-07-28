@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
-import { firebase } from "../initFirebase"
+import { secondaryFirebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 
 function AddTeam({history}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
 
-  const setRoleForUser = (user) => {
-    
-  } 
-
   const addUser = async () => {
     try{
-      const response = await firebase.auth().createUserWithEmailAndPassword(email, password)
-      console.log('add team',response)
+      const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
+      console.log('User registered successfully!')
+      console.log(response.user)
+      secondaryFirebase.auth().signOut();
     }
     catch(error){
       console.log(error)
