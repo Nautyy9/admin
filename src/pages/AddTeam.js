@@ -6,13 +6,18 @@ import { AuthContext } from "../context/auth";
 function AddTeam({history}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
+  const db = secondaryFirebase.firestore()
+  const {role} = useContext(AuthContext)
 
-  const addUser = async () => {
+  const addUser = async (role) => {
     try{
-      const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
-      console.log('User registered successfully!')
-      console.log(response.user)
-      secondaryFirebase.auth().signOut();
+      if(role){
+        const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
+        await db.collection('users').doc(response.user.uid).set({role:role})
+        console.log('User registered successfully!')
+        console.log(response.user)
+        secondaryFirebase.auth().signOut();
+      }
     }
     catch(error){
       console.log(error)
@@ -22,7 +27,14 @@ function AddTeam({history}) {
   const handleAddUser = (e) => {
     e.preventDefault()
     if(email && password) {
-      addUser()
+      let new_role;
+      if(role === 'superadmin'){
+        new_role = "admin"
+      }
+      else if(role === 'admin'){
+        new_role = "staff"
+      }
+      addUser(new_role)
     }
   }
 

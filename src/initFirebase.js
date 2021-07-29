@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/auth";
+import "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA3T-3p0m-GV7a2vgdNNcLSmHjN_5Y8yGI",
@@ -14,7 +15,6 @@ const firebaseConfig = {
 
 
 firebase.initializeApp(firebaseConfig)
-
 const secondaryFirebase = firebase.initializeApp(firebaseConfig,"Secondary")
 
 export { firebase,secondaryFirebase }

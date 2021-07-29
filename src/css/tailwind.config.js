@@ -60,7 +60,8 @@ module.exports = {
       margin: ['first', 'last'],
       borderWidth: ['first', 'last'],
       padding: ['first', 'last'],
-      opacity:['disabled']
+      opacity:['disabled'],
+      animation:['disabled']
     },
   },
   plugins: [

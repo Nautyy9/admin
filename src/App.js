@@ -37,27 +37,16 @@ const PageNotFound = () => {
 function App() {
   const [role, setRole] = useState(null)
   const location = useLocation();
+  const db = firebase.firestore()
+  const user = firebase.auth().currentUser
 
-  console.log(firebase.auth().currentUser)
-
-  useEffect(()=>{
-    if(firebase.auth().currentUser){
-      firebase.auth().currentUser.getIdTokenResult()
-      .then((idTokenResult) => {
-        // Confirm the user is an Admin.
-        if (!!idTokenResult.claims.role) {
-          // Show admin UI.
-          setRole('admin')
-          console.log("claims",idTokenResult.claims)
-        } else {
-          // Show regular user UI.
-          setRole('superuser')
-          console.log('superuser')
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  useEffect(async ()=>{
+    if(user){
+      const doc = await db.collection('users').doc(user.uid).get()
+      if(!doc.exists){
+        console.log('setting role')
+        await db.collection('users').doc(user.uid).set({role:"superadmin"})
+      }   
     }
   },[])
 

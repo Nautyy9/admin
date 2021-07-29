@@ -81,6 +81,7 @@ function Customer() {
                   headers={headers}
                   data={customerData}
                   isLoading={isLoading}
+                  hasActions={true}
                 />
               </div>
             </div>

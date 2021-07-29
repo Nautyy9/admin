@@ -1,27 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
-import DetailModal from '../common/DetailModal';
 
-function DashboardCard07({label,headers,data,isLoading,hasActions}) {
-  const [detailOpen, setdetailOpen] = useState(false)
-  const [orders, setOrders] = useState({})
+function DetailTable({label,headers,data,isLoading}) {
 
-  useEffect(()=>{
-    console.log('data',data)
-  },[])
-
-  const handleShowDetails = (customer,e) => {
-    e.preventDefault();
-    setOrders(customer.data.orders)
-    setdetailOpen(true)
-    console.log('orders',customer.data.orders)
-  }
-
-  const order_headers = {
-    "Cart ID":"cartID",
-    "Item":"itemID",
-    "Quantity":"quantity"
-  }
 
   return (
     <div className="col-span-full xl:col-span-8 bg-white shadow-lg rounded-sm border border-gray-200">
@@ -47,11 +28,6 @@ function DashboardCard07({label,headers,data,isLoading,hasActions}) {
                     </th>
                   ))
                 }
-                { hasActions &&
-                  <th className="p-2" key='Action'>
-                    <div className="font-semibold text-left">Action</div>
-                  </th>
-                }
               </tr>
             </thead>
             {/* Table body */}
@@ -63,18 +39,9 @@ function DashboardCard07({label,headers,data,isLoading,hasActions}) {
                     { 
                       Object.keys(headers).map(column=>(
                         <td className="p-2" key={column}>
-                          <div className="text-gray-800">{result.data[headers[column]]}</div>
+                          <div className="text-gray-800">{result[headers[column]]}</div>
                         </td> 
                       ))
-                    }
-                    { hasActions &&
-                      <td>
-                        <button 
-                            onClick={(e)=>handleShowDetails(result,e)}
-                            className="btn px-2 py-1 bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none">
-                              View Details
-                          </button> 
-                      </td>
                     }
                   </tr>
                 ))
@@ -95,13 +62,10 @@ function DashboardCard07({label,headers,data,isLoading,hasActions}) {
               
             </tbody>
           </table>
-          { orders &&
-            <DetailModal setOpen={detailOpen} setClose={()=>setdetailOpen(false)} data={orders} headers={order_headers}/>
-          }
         </div>
       </div>
     </div>
   );
 }
 
-export default DashboardCard07;
+export default DetailTable;

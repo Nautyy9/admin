@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [role, setRole] = useState(null);
   const [pending, setPending] = useState(true);
+  const db = firebase.firestore()
 
   useEffect(() => {
       console.log('in the context')
@@ -38,24 +39,12 @@ export const AuthProvider = ({ children }) => {
       });
   }, []);
 
-  useEffect(()=>{
+  useEffect(async ()=>{
     if(currentUser){
-      firebase.auth().currentUser.getIdTokenResult()
-      .then((idTokenResult) => {
-        // Confirm the user is an Admin.
-        if (!!idTokenResult.claims.role) {
-          // Show admin UI.
-          setRole('admin')
-          console.log("claims",idTokenResult.claims)
-        } else {
-          // Show regular user UI.
-          setRole('superuser')
-          console.log('superuser')
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      const doc = await db.collection('users').doc(currentUser.uid).get()
+      if(doc.exists){
+        setRole(doc.data().role)
+      }
     }
   },[currentUser])
 

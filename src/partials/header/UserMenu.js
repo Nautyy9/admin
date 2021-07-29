@@ -4,7 +4,7 @@ import Transition from '../../utils/Transition';
 import { firebase } from "../../initFirebase";
 import UserAvatar from '../../images/user-avatar-32.png';
 
-function UserMenu({user}) {
+function UserMenu({user,role}) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -66,7 +66,7 @@ function UserMenu({user}) {
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200">
             <div className="font-medium text-gray-800">{user.email}</div>
-            <div className="text-xs text-gray-500 italic">Administrator</div>
+            <div className="text-xs text-gray-500 italic">{role}</div>
           </div>
           <ul>
             {/* <li>
