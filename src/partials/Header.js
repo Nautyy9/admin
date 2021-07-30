@@ -5,17 +5,18 @@ import Help from './header/Help';
 import UserMenu from './header/UserMenu';
 import { AuthContext } from '../context/auth';
 
-function Header({sidebarOpen,setSidebarOpen}) {
+function Header({sidebarOpen,setSidebarOpen,showSidebar=true}) {
   const {currentUser,role} = useContext(AuthContext)
   return (
     <header className="sticky top-0 bg-white border-b border-gray-200 z-30">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 -mb-px">
 
-          {/* Header: Left side */}
+        {/* Header: Left side */}
           <div className="flex">
 
             {/* Hamburger button */}
+            { showSidebar &&
             <button
               className="text-gray-500 hover:text-gray-600 lg:hidden"
               aria-controls="sidebar"
@@ -29,13 +30,14 @@ function Header({sidebarOpen,setSidebarOpen}) {
                 <rect x="4" y="17" width="16" height="2" />
               </svg>
             </button>
+            }
 
           </div>
 
           {/* Header: Right side */}
           <div className="flex items-center">
 
-            <SearchModal />
+            {/* <SearchModal /> */}
             {/* <Notifications /> */}
             {/* <Help /> */}
             {/*  Divider */}
