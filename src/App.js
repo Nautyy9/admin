@@ -12,6 +12,7 @@ import './css/style.scss';
 import { focusHandling } from 'cruip-js-toolkit';
 import './charts/ChartjsConfig';
 import { AuthProvider } from './context/auth';
+import { Connector } from 'react-mqtt-client'
 
 // Import pages
 import Login from './pages/Login';
@@ -56,6 +57,10 @@ function App() {
     }
   }
 
+  // useEffect(()=>{
+    
+  // })
+
   useEffect(() => {
     document.querySelector('html').style.scrollBehavior = 'auto'
     window.scroll({ top: 0 })
@@ -64,13 +69,20 @@ function App() {
     checkRole()
   }, [location.pathname]); // triggered on route change
 
+  var options = {
+    protocol: 'mqtts',
+    // clientId uniquely identifies client
+    // choose any string you wish
+    clientId: 'ddengine-01'    
+};
+
   return (
     <>
       <AuthProvider>
         <Switch>
           <PrivateRoute path="/login" component={Login} type="guest"/>
           { role === 'staff' ? 
-            <PrivateRoute exact path="/" component={AddProduct} type="private"/>
+            <PrivateRoute path="/" component={AddProduct} type="private" staff={true}/>
           :
 
           <>
@@ -81,6 +93,7 @@ function App() {
             <PrivateRoute path="/team" component={Team} type="private"/>
           </>
           }  
+          
           <Route component={PageNotFound}/>
         </Switch>
       </AuthProvider>
