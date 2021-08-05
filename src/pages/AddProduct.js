@@ -4,8 +4,7 @@ import Transition from "../utils/Transition";
 import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 import Header from "../partials/Header";
-import { subscribe } from 'react-mqtt-client'
-var mqtt = require('mqtt')
+import mqtt from "mqtt";
 
 
 function AddProduct({history}) {
@@ -16,7 +15,7 @@ function AddProduct({history}) {
   const [itemWeight,setItemWeight] = useState(0)
   const [location,setLocation] = useState("")
   const [shelveID,setShelveID] = useState()
-  const [connected, setConnected] = useState(false)
+  const [client, setClient] = useState()
   const db = firebase.database()
   const dropdown = useRef(null);
   const trigger = useRef(null);
@@ -29,7 +28,16 @@ function AddProduct({history}) {
     // port:8000,
     // keepalive:60
   };
-  let client = mqtt.connect('ws://15.206.66.251:8083/mqtt');
+
+  useEffect(()=>{
+    let instance = mqtt.connect('ws://15.206.66.251:8083/mqtt');
+    if(instance){
+      instance.on('connect', () => {
+        console.log('connected')
+        setClient(instance)
+      });
+    }
+  },[])
   
 
   // client.subscribe('admin/shelve1/');
@@ -116,8 +124,8 @@ function AddProduct({history}) {
   const passToMQTT = (e) => {
     e.preventDefault()
     const product = {
-      itemName,
-      weight:itemWeight,
+      itemID:itemName,
+      netItemWeight:itemWeight,
       location,
       shelveID
     }
@@ -136,11 +144,11 @@ function AddProduct({history}) {
   useEffect(() => {
     if (client) {
       console.log(client)
-      client.on('connect', () => {
-        console.log('connected')
-        // setConnected(!connected)
-        // client.publish('admin/shelve1/',"Hello 123")
-      });
+      // client.on('connect', () => {
+      //   console.log('connected')
+      //   // setConnected(!connected)
+      //   // client.publish('admin/shelve1/',"Hello 123")
+      // });
       client.on('error', (err) => {
         console.error('Connection error: ', err);
         client.end();

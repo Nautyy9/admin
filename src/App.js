@@ -12,7 +12,6 @@ import './css/style.scss';
 import { focusHandling } from 'cruip-js-toolkit';
 import './charts/ChartjsConfig';
 import { AuthProvider } from './context/auth';
-import { Connector } from 'react-mqtt-client'
 
 // Import pages
 import Login from './pages/Login';
