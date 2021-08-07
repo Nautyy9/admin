@@ -1,12 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
 import DashboardCard07 from '../partials/dashboard/DashboardCard07';
+import DetailTable from '../partials/common/DetailTable';
+
+import { firebase } from "../initFirebase";
 
 function EntryAndExit() {
-
+  const [entryData, setEntryData] = useState([])
+  const [exitData, setExitData] = useState([])
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const db = firebase.database()
+
+  const getEntryData = () => {
+    try{
+      const ref  = db.ref('dummydata/entry-points')
+      ref.on('value',(snapshot)=>{
+        console.log('entry point data')
+        console.log(snapshot.val())
+        setEntryData(snapshot.val())
+      })
+    }
+    catch(err){
+      alert(err.message)
+    }
+  }
+
+  const getExitData = () => {
+    try{
+      const ref  = db.ref('dummydata/exit-points')
+      ref.on('value',(snapshot)=>{
+        console.log('entry point data')
+        console.log(snapshot.val())
+        setExitData(snapshot.val())
+      })
+    }
+    catch(err){
+      alert(err.message)
+    }
+  }
+
+  useEffect(()=>{
+    getEntryData()
+    getExitData()
+  },[])
+
+  const headers = {
+    "Device ID":"deviceID",
+    "Status":"status",
+    "Last Opened At":"lastOpenedAt",
+    "Last Closed At":"lastClosedAt"
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -25,8 +70,18 @@ function EntryAndExit() {
 
             {/* Cards */}
             <div className="space-y-10">
-              <DashboardCard07 />
-              <DashboardCard07 />
+              <DetailTable 
+                label="Entry Point Details"
+                headers={headers}
+                data={entryData}
+                isLoading={false}
+              />
+              <DetailTable 
+                label="Exit Point Details"
+                headers={headers}
+                data={exitData}
+                isLoading={false}
+              />
             </div>
 
           </div>

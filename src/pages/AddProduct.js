@@ -20,6 +20,8 @@ function AddProduct({history}) {
   const dropdown = useRef(null);
   const trigger = useRef(null);
 
+  console.log('in the product')
+
   const options = {
     protocol: 'ws',
     // clientId uniquely identifies client

@@ -7,7 +7,7 @@ It makes the routes autheticated by checking the context data and further valida
 Also to make guest links i.e. login which can't be accessed by logged in user.
  */
 
-const PrivateRoute = ({type,component: RouteComponent,...rest}) => {
+const PrivateRoute = ({type,staff=false,component: RouteComponent,...rest}) => {
     const {currentUser} = useContext(AuthContext);
     // const { type } = props;
     // if (type === "guest" && currentUser) return <Redirect to="/"/>;

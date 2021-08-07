@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Transition from '../../utils/Transition';
 import { firebase } from "../../initFirebase";
 import UserAvatar from '../../images/user-avatar-32.png';
+import { AuthContext } from '../../context/auth';
 
 function UserMenu({user,role}) {
 
@@ -30,6 +31,12 @@ function UserMenu({user,role}) {
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
   });
+
+  const onSignOut = (e) => {
+    e.preventDefault()
+    firebase.auth().signOut()
+    localStorage.clear()
+  }
 
   return (
     <div className="relative inline-flex">
@@ -82,7 +89,7 @@ function UserMenu({user,role}) {
               <Link
                 className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
                 to="/"
-                onClick={() => firebase.auth().signOut()}
+                onClick={onSignOut}
               >
                 Sign Out
               </Link>
