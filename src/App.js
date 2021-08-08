@@ -53,10 +53,7 @@ function App() {
 
   return (
     <>
-      {
-        !role ? 
-          <Loader/>
-        :
+      
       <Switch>
         <PrivateRoute path="/login" component={Login} type="guest"/>
         { role === 'staff' ? 
@@ -78,7 +75,6 @@ function App() {
         
         
       </Switch>
-      }
     </>
   );
 }

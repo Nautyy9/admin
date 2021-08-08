@@ -9,6 +9,8 @@ function Login({history}) {
   const [loading,setLoading] = useState(false)
   // const db = firebase.firestore()
 
+  console.log('login')
+
   const firebaseLogin = async () => {
     try{
       const response = await firebase.auth().signInWithEmailAndPassword(email, password)
