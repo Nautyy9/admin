@@ -19,9 +19,9 @@ export const AuthProvider = ({ children }) => {
           const doc = db.collection('users').doc(user.uid).get()
           if(doc.exists){
             setRole(doc.data().role)
-          }
-          setPending(false)
+          } 
         }
+        setPending(false)
         setCurrentUser(user)
         
         console.log('Checking User',user)
