@@ -23,7 +23,7 @@ function AddProduct({history}) {
   console.log('in the product')
 
   const options = {
-    protocol: 'ws',
+    protocol: window.location.protocol === 'https:' ? 'wss' : 'ws',
     // clientId uniquely identifies client
     // choose any string you wish
     // clientId: 'b0908853',
@@ -32,7 +32,7 @@ function AddProduct({history}) {
   };
 
   useEffect(()=>{
-    let instance = mqtt.connect('ws://15.206.66.251:8083/mqtt');
+    let instance = mqtt.connect(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://15.206.66.251:8083/mqtt`);
     if(instance){
       instance.on('connect', () => {
         console.log('connected')
