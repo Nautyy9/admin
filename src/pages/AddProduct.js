@@ -20,28 +20,32 @@ function AddProduct({history}) {
   const dropdown = useRef(null);
   const trigger = useRef(null);
 
-  console.log('in the product')
-
   const options = {
-    defaultProtocol: window.location.protocol === 'https:' ? 'wss' : 'ws',
+    defaultProtocol:'wss',
+    // defaultProtocol: window.location.protocol === 'https:' ? 'wss' : 'ws',
     // clientId uniquely identifies client
     // choose any string you wish
-    // clientId: 'b0908853',
+    clientId: 'b0908853',
     // port:8000,
-    // keepalive:60
+    keepalive:60
   };
 
-  useEffect(()=>{
-    let url = window.location.protocol === 'https:' ? 'wss://15.206.66.251:8084/mqtt' : 'ws://15.206.66.251:8083/mqtt'
-    let instance = mqtt.connect('wss://15.206.66.251:8084/mqtt',options);
-    console.log(instance)
-    if(instance){
-      instance.on('connect', () => {
-        console.log('connected')
-        setClient(instance)
-      });
-    }
-  },[])
+  // useEffect(()=>{
+  //   let url = window.location.protocol === 'https:' ? 'wss://15.206.66.251:8084/mqtt' : 'ws://15.206.66.251:8083/mqtt'
+  //   let instance = mqtt.connect('wss://15.206.66.251:8084/mqtt',options);
+  //   console.log(instance)
+  //   if(instance){
+  //     instance.on('connect', () => {
+  //       console.log('connected')
+  //       setClient(instance)
+  //     });
+
+  //     instance.on('error', (err) => {
+  //       console.error('Connection error: ', err);
+  //       instance.end();
+  //     });
+  //   }
+  // },[])
   
 
   // client.subscribe('admin/shelve1/');
@@ -93,17 +97,18 @@ function AddProduct({history}) {
         const product = {
             itemID:itemName,
             netItemWeight:itemWeight,
-            location
+            location,
+            status:'active'
         }
         db.ref('dummydata/smart-shelves/'+shelveID).update(product)
-        console.log('Product Added successfully!')
+        alert('Product Added successfully!')
     }
     catch(error){
         console.log(error)
     }
   }
 
-  const handleAddUser = (e) => {
+  const handleAddProduct = (e) => {
     e.preventDefault()
     if(itemName && itemWeight && location && shelveID) {
       addProduct()
@@ -145,27 +150,32 @@ function AddProduct({history}) {
 
   }
 
-  useEffect(() => {
-    if (client) {
-      console.log(client)
-      // client.on('connect', () => {
-      //   console.log('connected')
-      //   // setConnected(!connected)
-      //   // client.publish('admin/shelve1/',"Hello 123")
-      // });
-      client.on('error', (err) => {
-        console.error('Connection error: ', err);
-        client.end();
-      });
-      client.on('reconnect', () => {
-        console.log('reconnecting')
-      });
-      client.on('message', (topic, message) => {
-        const payload = { topic, message: message.toString() };
+  // useEffect(() => {
+  //   // if (client) {
+  //     console.log(client)
+  //     // client.on('connect', () => {
+  //     //   console.log('connected')
+  //     //   // setConnected(!connected)
+  //     //   // client.publish('admin/shelve1/',"Hello 123")
+  //     // });
+
+  //     client.on('connect', () => {
+  //       console.log('connected')
+  //       // setClient(instance)
+  //     });
+  //     client.on('error', (err) => {
+  //       console.error('Connection error: ', err);
+  //       client.end();
+  //     });
+  //     client.on('reconnect', () => {
+  //       console.log('reconnecting')
+  //     });
+  //     client.on('message', (topic, message) => {
+  //       const payload = { topic, message: message.toString() };
         
-      });
-    }
-  }, [client]);
+  //     });
+  //   // }
+  // }, [client]);
 
 
   return (
@@ -280,7 +290,7 @@ function AddProduct({history}) {
 
                       <div className="text-center mt-6">
                         <button 
-                          onClick={passToMQTT}
+                          onClick={handleAddProduct}
                           className="btn uppercase px-3 py-2 bg-indigo-500 hover:bg-indigo-400 text-white focus:outline-none focus:ring focus:ring-offset-2 focus:ring-indigo-500 focus:ring-opacity-80 cursor-pointer">
                             Add Product
                         </button> 
