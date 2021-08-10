@@ -33,7 +33,7 @@ function AddProduct({history}) {
 
   useEffect(()=>{
     let url = window.location.protocol === 'https:' ? 'wss://15.206.66.251:8084/mqtt' : 'ws://15.206.66.251:8083/mqtt'
-    let instance = mqtt.connect(url);
+    let instance = mqtt.connect(url,options);
     if(instance){
       instance.on('connect', () => {
         console.log('connected')
