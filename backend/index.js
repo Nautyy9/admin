@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
+const mqtt = require('mqtt');
 
 const app = express();
 // enableWs(app)
@@ -18,24 +19,19 @@ admin.initializeApp({
 const db = admin.database()
 const shelfCollection = 'dummydata/smart-shelves';
 
-// admin.database.enableLogging(true)
+var client = mqtt.connect("mqtt://broker.hivemq.com")
+client.on("connect",function(){	
+    console.log("connected");
+})
 
-// app.get('/shelves', async (req, res) => {
-//     try {
-//         const ref = db.ref(shelfCollection);
-//         const users = [];
-//         ref.on('value',(snapshot)=>{
-//             console.log(snapshot.val())
-//             users.push(snapshot.val())
-//         })
-//         res.status(200).json(users);
-//     } catch (error) {
-//         console.log('error-error')
-//         res.status(500).send(error);
-//     }
-// });
-
-app.get('/')
+app.post('/add_product', (req, res) => {
+    client.publish('admin/shelve1/',JSON.stringify(req.body),error => {
+        if (error) {
+            res.send(error)
+        }
+    });
+    res.send('Added Successfully')
+})
 
 app.listen(port, function() {
     console.log('app started');
