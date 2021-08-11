@@ -23,7 +23,8 @@ function Customer() {
       })
     })
     console.log(result)
-    setCustomerData(result)
+    // setCustomerData(result)
+    computeExtraHeaders(result)
   }
 
   const fetchCustomerData = () => {
@@ -49,14 +50,34 @@ function Customer() {
 
   const headers = {
     "User ID":"userID",
+    "Cart ID":"cartID",
     "In Time":"inTime",
     "Out Time":"outTime",
-    "Items In Cart":"itemsInCart",
-    "Quantity":"quantity",
+    // "Total Items":"itemsInCart",
+    "Total Quantity":"totalQty",
+    "Total Price":"totalPrice"
     // "Total Pickup":"totalPickup",
     // "Total Placed":"totalPlaced",
     // "Total Quantity":"totalQty",
     // "Total Weight":"totalWeight"
+  }
+
+
+  // to compute total quantity and price for every customer
+  const computeExtraHeaders = (data) => {
+    data.map(each=>{
+      let detail = each.data.orders.reduce((acc,order)=>{
+        acc['total'] += order.itemPrice * order.quantity
+        acc['quantity'] += order.quantity
+        return acc
+      },{'total':0,'quantity':0})
+      console.log(detail)
+      each.data['totalPrice'] = detail['total']
+      each.data['totalQty'] = detail['quantity']
+    })
+    console.log('res')
+    console.log(data)
+    setCustomerData(data)
   }
 
   return (
@@ -82,6 +103,8 @@ function Customer() {
                   data={customerData}
                   isLoading={isLoading}
                   hasActions={true}
+                  showOrderTotal={true}
+                  action_header={"Items In Cart"}
                 />
               </div>
             </div>

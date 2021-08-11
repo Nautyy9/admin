@@ -49,8 +49,8 @@ function EntryAndExit() {
   const headers = {
     "Device ID":"deviceID",
     "Status":"status",
-    "Last Opened At":"lastOpenedAt",
-    "Last Closed At":"lastClosedAt"
+    "Last Scanned At":"lastScannedAt",
+    "Last Scanned ID":"lastScannedID"
   }
 
   return (

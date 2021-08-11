@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
 import DetailModal from '../common/DetailModal';
 
-function DashboardCard07({label,headers,data,isLoading,hasActions}) {
+function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}) {
   const [detailOpen, setdetailOpen] = useState(false)
   const [orders, setOrders] = useState({})
 
@@ -18,9 +18,9 @@ function DashboardCard07({label,headers,data,isLoading,hasActions}) {
   }
 
   const order_headers = {
-    "Cart ID":"cartID",
     "Item":"itemID",
-    "Quantity":"quantity"
+    "Quantity":"quantity",
+    "Price":"itemPrice"
   }
 
   return (
@@ -49,7 +49,7 @@ function DashboardCard07({label,headers,data,isLoading,hasActions}) {
                 }
                 { hasActions &&
                   <th className="p-2" key='Action'>
-                    <div className="font-semibold text-left">Action</div>
+                    <div className="font-semibold text-left">{action_header}</div>
                   </th>
                 }
               </tr>
