@@ -23,6 +23,7 @@ import Shelves from './pages/Shelves';
 import EntryAndExit from './pages/EntryAndExit';
 import Team from './pages/Team';
 import AddProduct from './pages/AddProduct';
+import DeviceDetails from './pages/DeviceDetails';
 
 const PageNotFound = () => {
   return(
@@ -67,12 +68,13 @@ function App() {
           <PrivateRoute exact path="/" component={Dashboard} type="private"/>
           <PrivateRoute path="/customers" component={Customer} type="private"/>
           <PrivateRoute path="/shelves" component={Shelves} type="private"/>
+          <PrivateRoute path="/devices" component={DeviceDetails} type="private"/>
           <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
           <PrivateRoute path="/team" component={Team} type="private"/>
-          <Route component={PageNotFound}/>
+          <Redirect to="/"/>
         </>
         }  
-        
+        {/* <Route component={PageNotFound}/> */}
         
       </Switch>
     </>

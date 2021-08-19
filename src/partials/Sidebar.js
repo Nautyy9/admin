@@ -203,19 +203,19 @@ function Sidebar({
             </li> */}
             
             {/* Applications */}
-            {/* <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'applications' && 'bg-gray-900'}`}>
-              <NavLink exact to="/" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'applications' && 'hover:text-gray-200'}`}>
+            <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'devices' && 'bg-gray-900'}`}>
+              <NavLink exact to="/devices" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'devices' && 'hover:text-gray-200'}`}>
                 <div className="flex flex-grow">
                   <svg className="flex-shrink-0 h-6 w-6 mr-3" viewBox="0 0 24 24">
-                    <circle className={`fill-current text-gray-400 ${page === 'applications' && 'text-indigo-300'}`} cx="18.5" cy="5.5" r="4.5" />
-                    <circle className={`fill-current text-gray-600 ${page === 'applications' && 'text-indigo-500'}`} cx="5.5" cy="5.5" r="4.5" />
-                    <circle className={`fill-current text-gray-600 ${page === 'applications' && 'text-indigo-500'}`} cx="18.5" cy="18.5" r="4.5" />
-                    <circle className={`fill-current text-gray-400 ${page === 'applications' && 'text-indigo-300'}`} cx="5.5" cy="18.5" r="4.5" />
+                    <circle className={`fill-current text-gray-400 ${page === 'devices' && 'text-indigo-300'}`} cx="18.5" cy="5.5" r="4.5" />
+                    <circle className={`fill-current text-gray-600 ${page === 'devices' && 'text-indigo-500'}`} cx="5.5" cy="5.5" r="4.5" />
+                    <circle className={`fill-current text-gray-600 ${page === 'devices' && 'text-indigo-500'}`} cx="18.5" cy="18.5" r="4.5" />
+                    <circle className={`fill-current text-gray-400 ${page === 'devices' && 'text-indigo-300'}`} cx="5.5" cy="18.5" r="4.5" />
                   </svg>
-                  <span className="text-sm font-medium">Applications</span>
+                  <span className="text-sm font-medium">Devices</span>
                 </div>
               </NavLink>
-            </li> */}
+            </li>
             {/* Settings */}
             <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'settings' && 'bg-gray-900'}`}>
               <NavLink exact to="/" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'settings' && 'hover:text-gray-200'}`}>
