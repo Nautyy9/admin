@@ -9,48 +9,88 @@ import Dropdown from '../partials/actions/Dropdown';
 
 function DeviceDetails() {
   const [storeID, setStoreID] = useState('')
-  const [deviceType, setDeviceType] = useState('')
+  const [deviceType, setDeviceType] = useState('Shelve')
+  const [headers, setHeaders] = useState({
+    "Device ID":"shelveID",
+    "Type":"type",
+    "Status":"status"
+  })
   const [deviceData, setDeviceData] = useState([])
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const db = firebase.database()
 
-//   const getEntryData = () => {
-//     try{
-//       const ref  = db.ref('dummydata/entry-points')
-//       ref.on('value',(snapshot)=>{
-//         console.log('entry point data')
-//         console.log(snapshot.val())
-//         setEntryData(snapshot.val())
-//       })
-//     }
-//     catch(err){
-//       alert(err.message)
-//     }
-//   }
 
-//   const getExitData = () => {
-//     try{
-//       const ref  = db.ref('dummydata/exit-points')
-//       ref.on('value',(snapshot)=>{
-//         console.log('entry point data')
-//         console.log(snapshot.val())
-//         setExitData(snapshot.val())
-//       })
-//     }
-//     catch(err){
-//       alert(err.message)
-//     }
-//   }
+  const transformData = (data) =>{
+    const result = []
+    Object.keys(data).map(each=>{
+      result.push(data[each])
+    })
+    computeExtraHeaders(result)
+  }
+
+  const computeExtraHeaders = (data) => {
+    console.log(data)
+    console.log(deviceType)
+    data.map(each=>{
+      each['type'] = deviceType
+    })
+    setDeviceData(data)
+  }
+
+  const fetchData = async () => {
+    const ref = 'dummydata/'
+    let device = 'smart-shelves'
+    const entry_exit_headers = {
+        "Device ID":"deviceID",
+        "Type":"type",
+        "Status":"status"
+    }
+    const shelve_header = {
+        "Device ID":"shelveID",
+        "Type":"type",
+        "Status":"status"
+    }
+    if(deviceType === 'Shelve'){
+        device = 'smart-shelves'
+        setHeaders(shelve_header)
+    }
+    else if(deviceType === 'Exit'){
+        device = 'exit-points'
+        setHeaders(entry_exit_headers)
+    }
+    else if(deviceType === 'Entry'){
+        device = 'entry-points'
+        setHeaders(entry_exit_headers)
+    }
+    else{
+        alert('No Matching Type Found')
+        return 
+    }
+    let response = db.ref(`${ref}${device}`)
+    response.once('value',(snapshot)=>{
+        let data =  snapshot.val()
+        console.log(data)
+        if(deviceType === 'Shelve'){
+            transformData(data)
+        }
+        else{
+            computeExtraHeaders(data)
+        }
+
+    })
+  }
+ 
 
   useEffect(()=>{
     console.log('device type',deviceType)
     console.log('store id',storeID)
+    fetchData()
   },[deviceType,storeID])
 
-  const headers = {
-    "Device ID":"deviceID",
-    "Type":"type",
+  const onSelect = (id,event) => {
+      console.log(id)
   }
+
 
   const store_data = [
     {
@@ -123,6 +163,7 @@ function DeviceDetails() {
                 headers={headers}
                 data={deviceData}
                 isLoading={false}
+                onSelection={onSelect}
               />
             </div>
 
