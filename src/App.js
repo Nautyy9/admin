@@ -60,7 +60,7 @@ function App() {
         { role === 'staff' ? 
           <>
             <PrivateRoute exact path="/" component={AddProduct} type="private" staff={true}/>
-            <Redirect to="/"/>
+            {/* <Redirect to="/"/> */}
           </>
         :
 
@@ -71,10 +71,10 @@ function App() {
           <PrivateRoute path="/devices" component={DeviceDetails} type="private"/>
           <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
           <PrivateRoute path="/team" component={Team} type="private"/>
-          <Redirect to="/"/>
+          {/* <Redirect to="/"/> */}
         </>
         }  
-        {/* <Route component={PageNotFound}/> */}
+        <Route path="*" component={PageNotFound}/>
         
       </Switch>
     </>

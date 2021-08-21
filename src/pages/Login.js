@@ -14,13 +14,13 @@ function Login({history}) {
   const firebaseLogin = async () => {
     try{
       const response = await firebase.auth().signInWithEmailAndPassword(email, password)
-      console.log(response)
-      setLoading(!loading)
+      // console.log(response)
+      setLoading(false)
       history.push("/")
     }
     catch(error){
-      setLoading(!loading)
-      console.error(error)
+      alert(error.message)
+      setLoading(false)
     }   
   }
  
@@ -34,7 +34,7 @@ function Login({history}) {
   const handleLogin = (e) => {
     e.preventDefault()
     if(email && password){
-      setLoading(!loading)
+      setLoading(true)
       firebaseLogin()
     }
   }

@@ -6,17 +6,21 @@ import Header from '../partials/Header';
 import { firebase } from "../initFirebase";
 import CheckBoxTable from '../partials/common/CheckBoxTable';
 import Dropdown from '../partials/actions/Dropdown';
+import Loader from '../utils/Loader';
 
 function DeviceDetails() {
   const [storeID, setStoreID] = useState('')
   const [deviceType, setDeviceType] = useState('Shelve')
+  const [index, setIndex] = useState('shelveID')
+  const [loading, setLoading] = useState(false)
   const [headers, setHeaders] = useState({
     "Device ID":"shelveID",
     "Type":"type",
     "Status":"status"
   })
   const [deviceData, setDeviceData] = useState([])
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState([])
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const db = firebase.database()
 
 
@@ -35,6 +39,7 @@ function DeviceDetails() {
       each['type'] = deviceType
     })
     setDeviceData(data)
+    setLoading(false)
   }
 
   const fetchData = async () => {
@@ -53,14 +58,17 @@ function DeviceDetails() {
     if(deviceType === 'Shelve'){
         device = 'smart-shelves'
         setHeaders(shelve_header)
+        setIndex('shelveID')
     }
     else if(deviceType === 'Exit'){
         device = 'exit-points'
         setHeaders(entry_exit_headers)
+        setIndex('deviceID')
     }
     else if(deviceType === 'Entry'){
         device = 'entry-points'
         setHeaders(entry_exit_headers)
+        setIndex('deviceID')
     }
     else{
         alert('No Matching Type Found')
@@ -84,11 +92,33 @@ function DeviceDetails() {
   useEffect(()=>{
     console.log('device type',deviceType)
     console.log('store id',storeID)
+    setLoading(true)
     fetchData()
   },[deviceType,storeID])
 
+  const addOrRemoveAllDevices = () => {
+      let data = []
+      if(selectedDevice.length === deviceData.length){
+          setSelectedDevice(data)
+      }
+      else{
+          for (let acc = 0; acc < deviceData.length; acc++) {
+              const element = deviceData[acc];
+              data.push(element[index])
+          }
+          setSelectedDevice(data)
+      }
+  }
+
+
   const onSelect = (id,event) => {
-      console.log(id)
+      console.log('passed id',id)
+      if(!id){
+          addOrRemoveAllDevices()
+      }
+      else{
+        
+      }
   }
 
 
@@ -157,14 +187,18 @@ function DeviceDetails() {
                     setSelected={(id)=>{setDeviceType(id)}}
                      />
             </div>
-
-              <CheckBoxTable 
-                label="Device Details"
-                headers={headers}
-                data={deviceData}
-                isLoading={false}
-                onSelection={onSelect}
-              />
+              { loading ? 
+                <Loader/>
+                :
+                <CheckBoxTable 
+                    label="Device Details"
+                    headers={headers}
+                    data={deviceData}
+                    isLoading={false}
+                    id={index}
+                    onSelection={onSelect}
+                />
+              }
             </div>
 
           </div>
