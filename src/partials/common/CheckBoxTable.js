@@ -39,7 +39,7 @@ function CheckBoxTable({label,headers,data,isLoading, onSelection,id}) {
           }
       })
       setMutatedData(data)
-      onSelection(passed_id,event)
+      onSelection(String(passed_id),event)
   }
 
   return (
