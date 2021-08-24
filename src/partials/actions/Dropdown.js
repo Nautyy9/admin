@@ -37,7 +37,7 @@ const Dropdown = ({data,selected,setSelected,placeholder}) => {
     }
 
     return(
-        <div className="flex flex-col mr-6 relative">
+        <div className="flex flex-col relative">
             <div
                 ref={trigger}
                 className="border-2 border-gray-300 px-3 py-3 placeholder-gray-400 font-semibold text-gray-500 bg-white rounded text-sm shadow outline"

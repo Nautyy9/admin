@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
-import { secondaryFirebase } from "../initFirebase"
+import Dropdown from "../partials/actions/Dropdown";
+import { firebase, secondaryFirebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 
 function AddTeam({history}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
+  const [stores, setStores] = useState('')
+  const [storeID, setStoreID] = useState('')
   const db = secondaryFirebase.firestore()
   const {role} = useContext(AuthContext)
 
@@ -13,7 +16,7 @@ function AddTeam({history}) {
     try{
       if(role){
         const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
-        await db.collection('users').doc(response.user.uid).set({role:role})
+        await db.collection('users').doc(response.user.uid).set({role:role,store:storeID})
         console.log('User registered successfully!')
         console.log(response.user)
         secondaryFirebase.auth().signOut();
@@ -26,7 +29,7 @@ function AddTeam({history}) {
 
   const handleAddUser = (e) => {
     e.preventDefault()
-    if(email && password) {
+    if(email && password && storeID) {
       let new_role;
       if(role === 'superadmin'){
         new_role = "admin"
@@ -37,6 +40,18 @@ function AddTeam({history}) {
       addUser(new_role)
     }
   }
+
+  const getStores = () => {
+    const ref = firebase.database().ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
+
+  useEffect(()=>{
+    getStores()
+  },[])
 
 
   return (
@@ -80,6 +95,22 @@ function AddTeam({history}) {
                           value={password}
                           onChange={(e)=>{setPassword(e.target.value)}}
                           style={{ transition: "all .15s ease" }}
+                        />
+                      </div>
+
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-password"
+                        >
+                          Store
+                        </label>
+                        <Dropdown
+                          className='mr-0'
+                          data={stores}
+                          placeholder='Select Store'
+                          selected={storeID}
+                          setSelected={(id)=>setStoreID(id)}
                         />
                       </div>
 

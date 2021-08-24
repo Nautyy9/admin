@@ -183,7 +183,7 @@ function DeviceDetails() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
 
             <div className="space-y-10">
-              <div className="flex">
+              <div className="flex space-x-6">
                 <Dropdown 
                     data={store_data} 
                     placeholder='Select Store'
@@ -204,13 +204,13 @@ function DeviceDetails() {
                     {
                         selectedDevice.length > 0 && 
                         <div className="flex justify-between items-center sm:font-sm col-span-full xl:col-span-8 mb-4 px-4 py-3 bg-white shadow-md rounded-sm border border-gray-200">
-                            <div class="flex items-center justify-center bg-grey-lighter">
-                                <label class="flex items-center space-x-4 px-3 py-1 bg-white text-indigo-500 rounded-lg shadow-lg tracking-wide  border border-indigo-500 cursor-pointer hover:bg-indigo-500 hover:text-white">
-                                    <svg class="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <div className="flex items-center justify-center bg-grey-lighter">
+                                <label className="flex items-center space-x-4 px-3 py-1 bg-white text-indigo-500 rounded-lg shadow-lg tracking-wide  border border-indigo-500 cursor-pointer hover:bg-indigo-500 hover:text-white">
+                                    <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
                                     </svg>
-                                    <span class="text-base leading-normal">Select a file</span>
-                                    <input type='file' class="hidden" />
+                                    <span className="text-base leading-normal">Select a file</span>
+                                    <input type='file' className="hidden" />
                                 </label>
                             </div> 
                             <div className="text-center">
