@@ -34,6 +34,7 @@ function UserMenu({user,role}) {
 
   const onSignOut = (e) => {
     e.preventDefault()
+    console.log('logout')
     firebase.auth().signOut()
     localStorage.clear()
   }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { firebase } from "../initFirebase"
-import { useLocation, useHistory } from 'react-router-dom'
 import Loader from "../utils/Loader";
 
 export const AuthContext = React.createContext();
@@ -10,8 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [pending, setPending] = useState(true);
   const db = firebase.firestore()
-  // let location = useLocation()
-  // let history = useHistory()
 
   useEffect(() => {
       console.log('in the context')
@@ -23,18 +20,21 @@ export const AuthProvider = ({ children }) => {
           if(doc.exists){
             setRole(doc.data().role)
           } 
+          setCurrentUser(user)
+        }
+        else{
+          setCurrentUser(null)
         }
         setPending(false)
-        setCurrentUser(user)
+        
         
         console.log('Checking User',user)
-        // history.push(location.pathname)
       });
   }, []);
 
-  useEffect(async ()=>{
+  useEffect(()=>{
     if(currentUser){
-      const doc = await db.collection('users').doc(currentUser.uid).get()
+      const doc = db.collection('users').doc(currentUser.uid).get()
       if(doc.exists){
         setRole(doc.data().role)
       }

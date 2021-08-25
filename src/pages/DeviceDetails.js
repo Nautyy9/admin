@@ -9,6 +9,7 @@ import Dropdown from '../partials/actions/Dropdown';
 import Loader from '../utils/Loader';
 
 function DeviceDetails() {
+  const [stores, setStores] = useState([])
   const [storeID, setStoreID] = useState('')
   const [deviceType, setDeviceType] = useState('Shelve')
   const [index, setIndex] = useState('shelveID')
@@ -88,7 +89,21 @@ function DeviceDetails() {
 
     })
   }
+
+  const getStores = () => {
+    const ref = db.ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+      if(data.length > 0 ){
+          setStoreID(data[0].name)
+      }
+    })
+  }
  
+  useEffect(()=>{
+    getStores()
+  },[])
 
   useEffect(()=>{
     console.log('device type',deviceType)
@@ -185,7 +200,7 @@ function DeviceDetails() {
             <div className="space-y-10">
               <div className="flex space-x-6">
                 <Dropdown 
-                    data={store_data} 
+                    data={stores} 
                     placeholder='Select Store'
                     selected={storeID}
                     setSelected={(id)=>setStoreID(id)}

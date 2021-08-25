@@ -49,6 +49,16 @@ function AddTeam({history}) {
     })
   }
 
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      setStoreID(store.id)
+    }
+    else{
+      alert('Something Went Wrong !')
+    }
+  }
+
   useEffect(()=>{
     getStores()
   },[])
@@ -110,7 +120,7 @@ function AddTeam({history}) {
                           data={stores}
                           placeholder='Select Store'
                           selected={storeID}
-                          setSelected={(id)=>setStoreID(id)}
+                          setSelected={(name)=>handleStoreChange(name)}
                         />
                       </div>
 
