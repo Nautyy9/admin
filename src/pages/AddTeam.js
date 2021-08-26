@@ -12,24 +12,24 @@ function AddTeam({history}) {
   const db = secondaryFirebase.firestore()
   const {role} = useContext(AuthContext)
 
-  const addUser = async (role) => {
+  const addUser = async (selected_role) => {
     try{
-      if(role){
+      if(selected_role){
         const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
-        await db.collection('users').doc(response.user.uid).set({role:role,store:storeID})
-        console.log('User registered successfully!')
-        console.log(response.user)
+        await db.collection('users').doc(response.user.uid).set({email:email,role:selected_role,store:storeID})
+        alert('User registered successfully!')
         secondaryFirebase.auth().signOut();
       }
     }
     catch(error){
-      console.log(error)
+      alert(error.message)
     }
   }
 
   const handleAddUser = (e) => {
     e.preventDefault()
     if(email && password && storeID) {
+      console.log('adding new user')
       let new_role;
       if(role === 'superadmin'){
         new_role = "admin"
@@ -37,7 +37,11 @@ function AddTeam({history}) {
       else if(role === 'admin'){
         new_role = "staff"
       }
+      console.log(role)
       addUser(new_role)
+    }
+    else{
+      alert('Please fill the details')
     }
   }
 
@@ -120,7 +124,7 @@ function AddTeam({history}) {
                           data={stores}
                           placeholder='Select Store'
                           selected={storeID}
-                          setSelected={(name)=>handleStoreChange(name)}
+                          setSelected={handleStoreChange}
                         />
                       </div>
 

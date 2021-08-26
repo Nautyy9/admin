@@ -7,18 +7,23 @@ export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [role, setRole] = useState(null);
+  const [store, setStore] = useState(null);
+  const [email, setEmail] = useState(null);
   const [pending, setPending] = useState(true);
   const db = firebase.firestore()
 
   useEffect(() => {
-      console.log('in the context')
-      let callback = null;
-      let metadataRef = null;
-      firebase.auth().onAuthStateChanged((user) => {
+      firebase.auth().onAuthStateChanged(async (user) => {
         if(user){
-          const doc = db.collection('users').doc(user.uid).get()
+          const doc = await db.collection('users').doc(user.uid).get()
           if(doc.exists){
             setRole(doc.data().role)
+            if(doc.data().store){
+              setStore(doc.data().store)
+            }
+            if(doc.data().email){
+              setEmail(doc.data().email)
+            }
           } 
           setCurrentUser(user)
         }
@@ -37,6 +42,9 @@ export const AuthProvider = ({ children }) => {
       const doc = db.collection('users').doc(currentUser.uid).get()
       if(doc.exists){
         setRole(doc.data().role)
+        if(doc.data().store){
+          setStore(doc.data().store)
+        }
       }
     }
   },[currentUser])
@@ -53,7 +61,9 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
-        role
+        role,
+        store,
+        email
       }}
     >
       {children}

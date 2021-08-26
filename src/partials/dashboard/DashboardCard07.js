@@ -6,10 +6,6 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
   const [detailOpen, setdetailOpen] = useState(false)
   const [orders, setOrders] = useState({})
 
-  useEffect(()=>{
-    console.log('data',data)
-  },[])
-
   const handleShowDetails = (customer,e) => {
     e.preventDefault();
     setOrders(customer.data.orders)
