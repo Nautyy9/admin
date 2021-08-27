@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 import Transition from "../utils/Transition";
 import { firebase } from "../initFirebase"
@@ -19,6 +19,7 @@ function AddProduct({history}) {
   const db = firebase.database()
   const dropdown = useRef(null);
   const trigger = useRef(null);
+  const {role,store} = useContext(AuthContext)
 
   const options = {
     defaultProtocol:'wss',
@@ -236,6 +237,17 @@ function AddProduct({history}) {
                             </div>
                           </div>
                         </Transition>
+                      </div>
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-item-name"
+                        >
+                          Store ID
+                        </label>
+                        <div className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full">
+                          {store}
+                        </div>
                       </div>
                       <div className="relative w-full mb-3">
                         <label

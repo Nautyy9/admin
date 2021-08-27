@@ -32,9 +32,11 @@ const ViewTeam = () => {
     }
 
     const getStores = () => {
+      // console.log('triggred')
       const ref = db.ref('stores')
       ref.once('value',(snapshot)=>{
         let data = snapshot.val()
+        // console.log(data)
         setStores(data)
         // console.log(data)
         // if(data.length > 0 ){
@@ -44,15 +46,21 @@ const ViewTeam = () => {
     }
 
     useEffect(()=>{
-      if(role === 'superadmin'){
+      // console.log(role)
+      if(['superadmin','admin'].includes(role) ){
         getStores()
       }
       getTeamDetail()
-      setStoreID(store)
+      if(store){
+        console.log(store)
+        setStoreID(store)
+      }
+      
     },[])
 
     useEffect(()=>{
-      let store_data = stores.find(store=>store.name === storeID)
+      let store_data = stores.find(store=>[store.name,store.id].includes(storeID))
+      // console.log(store_data)
       if(store_data){
         let filtered_data = users.filter(user=>user.store === store_data.id)
         // console.log('filtered')

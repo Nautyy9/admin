@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
           const doc = await db.collection('users').doc(user.uid).get()
           if(doc.exists){
             setRole(doc.data().role)
+            // console.log(doc.data())
             if(doc.data().store){
               setStore(doc.data().store)
             }
