@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
 import DashboardCard07 from '../partials/dashboard/DashboardCard07';
 import DetailTable from '../partials/common/DetailTable';
+import Dropdown from '../partials/actions/Dropdown';
 
 import { firebase } from "../initFirebase";
+import { AuthContext } from '../context/auth';
 
 function EntryAndExit() {
   const [entryData, setEntryData] = useState([])
   const [exitData, setExitData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [storeID, setStoreID] = useState(null)
+  const [stores, setStores] = useState([])
+  const {role,store} = useContext(AuthContext)
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const db = firebase.database()
 
@@ -17,8 +23,6 @@ function EntryAndExit() {
     try{
       const ref  = db.ref('dummydata/entry-points')
       ref.on('value',(snapshot)=>{
-        console.log('entry point data')
-        console.log(snapshot.val())
         setEntryData(snapshot.val())
       })
     }
@@ -31,8 +35,6 @@ function EntryAndExit() {
     try{
       const ref  = db.ref('dummydata/exit-points')
       ref.on('value',(snapshot)=>{
-        console.log('entry point data')
-        console.log(snapshot.val())
         setExitData(snapshot.val())
       })
     }
@@ -41,9 +43,20 @@ function EntryAndExit() {
     }
   }
 
+  const getStores = () => {
+    const ref = db.ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
+
   useEffect(()=>{
+    setIsLoading(true)
     getEntryData()
     getExitData()
+    getStores()
+    setIsLoading(false)
   },[])
 
   const headers = {
@@ -67,6 +80,19 @@ function EntryAndExit() {
 
         <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+
+            { role === 'superadmin' &&
+              <div className="space-y-10 mb-4">
+                <div className="flex space-x-6">
+                  <Dropdown 
+                    data={stores} 
+                    placeholder='Select Store'
+                    selected={storeID}
+                    setSelected={(id)=>setStoreID(id)}
+                  />
+                </div>
+              </div>
+            }
 
             {/* Cards */}
             <div className="space-y-10">

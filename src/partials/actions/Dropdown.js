@@ -31,7 +31,7 @@ const Dropdown = ({data,selected,setSelected,placeholder}) => {
     }
 
     const handleSelect = (key) => {
-        console.log(key)
+        // console.log(key)
         setSelected(key)
         setDropdownOpen(false)
     }

@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
 import DashboardCard07 from '../partials/dashboard/DashboardCard07';
+import Dropdown from '../partials/actions/Dropdown';
 
 import { firebase } from "../initFirebase"
+import { AuthContext } from '../context/auth';
 
 const db = firebase.database()
 
 function Customer() {
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [customerData, setCustomerData] = useState([])
+  const [storeID, setStoreID] = useState(null)
+  const [stores, setStores] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const {role,store} = useContext(AuthContext)
+
+  const getStores = () => {
+    const ref = db.ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
 
   const transformData = (data) =>{
     const result = []
@@ -22,7 +34,7 @@ function Customer() {
         "data":data[each]
       })
     })
-    console.log(result)
+    // console.log(result)
     // setCustomerData(result)
     computeExtraHeaders(result)
   }
@@ -32,7 +44,7 @@ function Customer() {
     try {
       const ref = db.ref(customerCollection);
       ref.on('value',(snapshot)=>{
-          console.log('snapshot',snapshot.val())
+          // console.log('snapshot',snapshot.val())
           // users.push()
           transformData(snapshot.val())
       })
@@ -43,9 +55,15 @@ function Customer() {
   }
 
   useEffect(()=>{
-    setIsLoading(prev=>!prev)
+    setIsLoading(true)
     fetchCustomerData()
-    setIsLoading(prev=>!prev)
+    if(['superadmin','admin'].includes(role) ){
+      getStores()
+    }
+    if(store){
+      setStoreID(store)
+    }
+    setIsLoading(false)
   },[])
 
   const headers = {
@@ -71,12 +89,10 @@ function Customer() {
         acc['quantity'] += order.quantity
         return acc
       },{'total':0,'quantity':0})
-      console.log(detail)
+      // console.log(detail)
       each.data['totalPrice'] = detail['total']
       each.data['totalQty'] = detail['quantity']
     })
-    console.log('res')
-    console.log(data)
     setCustomerData(data)
   }
 
@@ -94,6 +110,19 @@ function Customer() {
 
         <main>
             <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+
+            { role === 'superadmin' &&
+              <div className="space-y-10 mb-4">
+                <div className="flex space-x-6">
+                  <Dropdown 
+                    data={stores} 
+                    placeholder='Select Store'
+                    selected={storeID}
+                    setSelected={(id)=>setStoreID(id)}
+                  />
+                </div>
+              </div>
+            }
 
               {/* Cards */}
               <div>
