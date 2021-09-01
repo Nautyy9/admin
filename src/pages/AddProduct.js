@@ -13,6 +13,7 @@ function AddProduct({history}) {
   const [shelves,setShelves] = useState({})
   const [itemName,setItemName] = useState("")
   const [itemWeight,setItemWeight] = useState(0)
+  const [minQuantity,setMinQuantity] = useState('')
   const [location,setLocation] = useState("")
   const [shelveID,setShelveID] = useState()
   const [client, setClient] = useState()
@@ -99,7 +100,11 @@ function AddProduct({history}) {
             itemID:itemName,
             netItemWeight:itemWeight,
             location,
-            status:'active'
+            minQuantity,
+            status:'active',
+            totalPickup:0,
+            totalPlaced:0,
+            totalQty:0
         }
         db.ref('dummydata/smart-shelves/'+shelveID).update(product)
         alert('Product Added successfully!')
@@ -279,6 +284,23 @@ function AddProduct({history}) {
                           placeholder="Item Weight"
                           value={itemWeight}
                           onChange={(e)=>{setItemWeight(e.target.value)}}
+                          style={{ transition: "all .15s ease" }}
+                        />
+                      </div>
+
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-location"
+                        >
+                          Minimum Quantity 
+                        </label>
+                        <input
+                          type="number"
+                          className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full"
+                          placeholder="Min Quantity"
+                          value={minQuantity}
+                          onChange={(e)=>{setMinQuantity(e.target.value)}}
                           style={{ transition: "all .15s ease" }}
                         />
                       </div>

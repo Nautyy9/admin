@@ -14,6 +14,7 @@ function Customer() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [customerData, setCustomerData] = useState([])
   const [storeID, setStoreID] = useState(null)
+  const [storeSlug, setStoreSlug] = useState('dummydata')
   const [stores, setStores] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const {role,store} = useContext(AuthContext)
@@ -40,13 +41,18 @@ function Customer() {
   }
 
   const fetchCustomerData = () => {
-    const customerCollection = 'dummydata/customers';
+    const customerCollection = `${storeSlug}/customers`;
     try {
       const ref = db.ref(customerCollection);
       ref.on('value',(snapshot)=>{
           // console.log('snapshot',snapshot.val())
           // users.push()
-          transformData(snapshot.val())
+          if(snapshot.val()){
+            transformData(snapshot.val())
+          }
+          else{
+            setCustomerData([])
+          }
       })
       
     } catch (error) {
@@ -56,15 +62,27 @@ function Customer() {
 
   useEffect(()=>{
     setIsLoading(true)
-    fetchCustomerData()
     if(['superadmin','admin'].includes(role) ){
       getStores()
     }
-    if(store){
-      setStoreID(store)
-    }
     setIsLoading(false)
   },[])
+
+  useEffect(()=>{
+    fetchCustomerData()
+  },[storeSlug])
+
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      // console.log(store)
+      setStoreID(store.name)
+      setStoreSlug(store.id)
+    }
+    else{
+      alert('Something Went Wrong !')
+    }
+  }
 
   const headers = {
     "User ID":"userID",
@@ -118,7 +136,7 @@ function Customer() {
                     data={stores} 
                     placeholder='Select Store'
                     selected={storeID}
-                    setSelected={(id)=>setStoreID(id)}
+                    setSelected={(id)=>handleStoreChange(id)}
                   />
                 </div>
               </div>

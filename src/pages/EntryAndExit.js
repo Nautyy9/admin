@@ -14,6 +14,7 @@ function EntryAndExit() {
   const [exitData, setExitData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [storeID, setStoreID] = useState(null)
+  const [storeSlug, setStoreSlug] = useState('dummydata')
   const [stores, setStores] = useState([])
   const {role,store} = useContext(AuthContext)
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,9 +22,14 @@ function EntryAndExit() {
 
   const getEntryData = () => {
     try{
-      const ref  = db.ref('dummydata/entry-points')
+      const ref  = db.ref(`${storeSlug}/exit-points`)
       ref.on('value',(snapshot)=>{
-        setEntryData(snapshot.val())
+        if(snapshot.val()){
+          setEntryData(snapshot.val())
+        }
+        else{
+          setEntryData([])
+        }
       })
     }
     catch(err){
@@ -33,9 +39,14 @@ function EntryAndExit() {
 
   const getExitData = () => {
     try{
-      const ref  = db.ref('dummydata/exit-points')
+      const ref  = db.ref(`${storeSlug}/exit-points`)
       ref.on('value',(snapshot)=>{
-        setExitData(snapshot.val())
+        if(snapshot.val()){
+          setExitData(snapshot.val())
+        }
+        else{
+          setExitData([])
+        }
       })
     }
     catch(err){
@@ -51,13 +62,28 @@ function EntryAndExit() {
     })
   }
 
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      // console.log(store)
+      setStoreID(store.name)
+      setStoreSlug(store.id)
+    }
+    else{
+      alert('Something Went Wrong !')
+    }
+  }
+
   useEffect(()=>{
     setIsLoading(true)
-    getEntryData()
-    getExitData()
     getStores()
     setIsLoading(false)
   },[])
+
+  useEffect(()=>{
+    getEntryData()
+    getExitData()
+  },[storeSlug])
 
   const headers = {
     "Device ID":"deviceID",
@@ -88,7 +114,7 @@ function EntryAndExit() {
                     data={stores} 
                     placeholder='Select Store'
                     selected={storeID}
-                    setSelected={(id)=>setStoreID(id)}
+                    setSelected={(id)=>handleStoreChange(id)}
                   />
                 </div>
               </div>
@@ -100,13 +126,13 @@ function EntryAndExit() {
                 label="Entry Point Details"
                 headers={headers}
                 data={entryData}
-                isLoading={false}
+                isLoading={isLoading}
               />
               <DetailTable 
                 label="Exit Point Details"
                 headers={headers}
                 data={exitData}
-                isLoading={false}
+                isLoading={isLoading}
               />
             </div>
 

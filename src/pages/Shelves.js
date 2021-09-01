@@ -17,6 +17,7 @@ function Shelves() {
   const [ShelfData, setShelfData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [storeID, setStoreID] = useState(null)
+  const [storeSlug, setStoreSlug] = useState('dummydata')
   const [stores, setStores] = useState([])
   const {role,store} = useContext(AuthContext)
 
@@ -33,14 +34,19 @@ function Shelves() {
   }
 
   const fetchShelfData = () => {
-    const shelfCollection = 'dummydata/smart-shelves';
+    const shelfCollection = `${storeSlug}/smart-shelves`;
     try {
       const ref = db.ref(shelfCollection);
       const users = [];
       ref.on('value',(snapshot)=>{
           // console.log('snapshot',snapshot.val())
           // users.push()
-          transformData(snapshot.val())
+          if(snapshot.val()){
+            transformData(snapshot.val())
+          }
+          else{
+            setShelfData([])
+          }
       })
       
     } catch (error) {
@@ -56,9 +62,21 @@ function Shelves() {
     })
   }
 
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      // console.log(store)
+      setStoreID(store.name)
+      setStoreSlug(store.id)
+    }
+    else{
+      alert('Something Went Wrong !')
+    }
+  }
+
   useEffect(()=>{
     setIsLoading(true)
-    fetchShelfData()
+    // fetchShelfData()
     if(['superadmin','admin'].includes(role) ){
       getStores()
     }
@@ -67,6 +85,10 @@ function Shelves() {
     }
     setIsLoading(false)
   },[])
+
+  useEffect(()=>{
+    fetchShelfData() 
+  },[storeSlug])
 
   const headers = {
     "Shelve ID":"shelveID",
@@ -77,6 +99,7 @@ function Shelves() {
     "Total Pickup":"totalPickup",
     "Total Placed":"totalPlaced",
     "Total Quantity":"totalQty",
+    "Minimum Quantity":"minQuantity",
     "Total Weight":"totalWeight"
   }
 
@@ -102,7 +125,7 @@ function Shelves() {
                     data={stores} 
                     placeholder='Select Store'
                     selected={storeID}
-                    setSelected={(id)=>setStoreID(id)}
+                    setSelected={(id)=>handleStoreChange(id)}
                   />
                 </div>
               </div>
