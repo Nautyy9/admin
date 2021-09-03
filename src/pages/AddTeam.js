@@ -3,8 +3,9 @@ import { withRouter, Redirect } from "react-router-dom";
 import Dropdown from "../partials/actions/Dropdown";
 import { firebase, secondaryFirebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
+import { withSnackbar } from "notistack";
 
-function AddTeam({history}) {
+function AddTeam({enqueueSnackbar}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   const [stores, setStores] = useState('')
@@ -19,17 +20,33 @@ function AddTeam({history}) {
         await db.collection('users').doc(response.user.uid).set({email:email,role:selected_role,store:storeID})
         alert('User registered successfully!')
         secondaryFirebase.auth().signOut();
+        clearData()
       }
     }
     catch(error){
-      alert(error.message)
+      enqueueSnackbar(error.message,{variant:"error"})
     }
+  }
+
+  const clearData = () => {
+    setEmail("")
+    setPassword("")
+    setStoreID(null)
   }
 
   const handleAddUser = (e) => {
     e.preventDefault()
-    if(email && password && storeID) {
-      console.log('adding new user')
+    if(!email){
+      enqueueSnackbar("Please Enter Email",{variant:"warning"})
+    }
+    else if(!password){
+      enqueueSnackbar("Please Enter Password",{variant:"warning"})
+    }
+    else if(!storeID){
+      enqueueSnackbar("Please Select Store",{variant:"warning"})
+    }
+    else{
+      // console.log('adding new user')
       let new_role;
       if(role === 'superadmin'){
         new_role = "admin"
@@ -39,9 +56,6 @@ function AddTeam({history}) {
       }
       console.log(role)
       addUser(new_role)
-    }
-    else{
-      alert('Please fill the details')
     }
   }
 
@@ -59,7 +73,7 @@ function AddTeam({history}) {
       setStoreID(store.id)
     }
     else{
-      alert('Something Went Wrong !')
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
     }
   }
 
@@ -147,4 +161,4 @@ function AddTeam({history}) {
   );
 }
 
-export default withRouter(AddTeam)
+export default withSnackbar(AddTeam)

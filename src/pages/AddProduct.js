@@ -5,9 +5,10 @@ import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 import Header from "../partials/Header";
 import mqtt from "mqtt";
+import { withSnackbar } from "notistack";
 
 
-function AddProduct({history}) {
+function AddProduct({enqueueSnackbar}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [shelves,setShelves] = useState({})
@@ -52,6 +53,14 @@ function AddProduct({history}) {
 
   // client.subscribe('admin/shelve1/');
 
+  const clearData = () => {
+    setItemName("")
+    setItemWeight(0)
+    setLocation("")
+    setMinQuantity(null)
+    setShelveID(null)
+  }
+
   useEffect(()=>{
     const keyHandler = ({ keyCode }) => {
       if (!dropdownOpen || keyCode !== 27) return;
@@ -78,14 +87,19 @@ function AddProduct({history}) {
         "data":data[each]
       })
     })
-    console.log(result)
+    // console.log(result)
     setShelves(result)
   }
 
   const getShelveData = () => {
     const response = db.ref('dummydata/smart-shelves')
     response.once('value',(snapshot)=>{
-        transformData(snapshot.val())
+        if(snapshot.val()){
+          transformData(snapshot.val())
+        }
+        else{
+          setShelves([])
+        }
     })
 
   }
@@ -100,33 +114,44 @@ function AddProduct({history}) {
             itemID:itemName,
             netItemWeight:itemWeight,
             location,
-            minQuantity,
+            minQuantity:minQuantity?minQuantity:0,
             status:'active',
             totalPickup:0,
             totalPlaced:0,
             totalQty:0
         }
         db.ref('dummydata/smart-shelves/'+shelveID).update(product)
-        alert('Product Added successfully!')
+        // alert('Product Added successfully!')
+        enqueueSnackbar("Product Added successfully!",{variant:"success"})
+        clearData()
     }
     catch(error){
-        console.log(error)
+      enqueueSnackbar(error.message,{variant:"error"})
     }
   }
 
   const handleAddProduct = (e) => {
     e.preventDefault()
-    if(itemName && itemWeight && location && shelveID) {
-      addProduct()
+    if(!itemName){
+      enqueueSnackbar("Please Enter Item Name",{variant:"warning"})
+    }
+    else if(!itemWeight){
+      enqueueSnackbar("Please Enter Item Weight",{variant:"warning"})
+    }
+    else if(!shelveID){
+      enqueueSnackbar("Please Select Shelve",{variant:"warning"})
+    }
+    else if(!location){
+      enqueueSnackbar("Please Enter Location",{variant:"warning"})
     }
     else{
-        alert('Please add details')
+      addProduct()
     }
   }
 
   const handleShelveClick = (id,e) => {
     e.preventDefault()
-    console.log('selected',id)
+    // console.log('selected',id)
     setShelveID(id)
     setDropdownOpen(!dropdownOpen)
   }
@@ -341,4 +366,4 @@ function AddProduct({history}) {
   );
 }
 
-export default withRouter(AddProduct)
+export default withSnackbar(AddProduct)

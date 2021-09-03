@@ -7,10 +7,11 @@ import Dropdown from '../partials/actions/Dropdown';
 
 import { firebase } from "../initFirebase"
 import { AuthContext } from '../context/auth';
+import { withSnackbar } from 'notistack';
 
 const db = firebase.database()
 
-function Customer() {
+function Customer({enqueueSnackbar}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [customerData, setCustomerData] = useState([])
   const [storeID, setStoreID] = useState(null)
@@ -56,7 +57,8 @@ function Customer() {
       })
       
     } catch (error) {
-        console.log(error.message)
+      enqueueSnackbar(error.message,{variant:"error"})
+        // console.log(error.message)
     }
   }
 
@@ -80,7 +82,7 @@ function Customer() {
       setStoreSlug(store.id)
     }
     else{
-      alert('Something Went Wrong !')
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
     }
   }
 
@@ -162,4 +164,5 @@ function Customer() {
   );
 }
 
-export default Customer;
+
+export default withSnackbar(Customer);

@@ -31,6 +31,9 @@ function Header({sidebarOpen,setSidebarOpen,showSidebar=true}) {
               </svg>
             </button>
             }
+            
+              <div className="invisible sm:visible font-bold text-lg md:visible xl:visible lg:visible ml-4">Smart Store Dashboard</div>
+            
 
           </div>
 

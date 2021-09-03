@@ -4,14 +4,22 @@ import { BrowserRouter as Router } from "react-router-dom";
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { AuthProvider } from './context/auth'
+import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthProvider>
-      <Router>
-        <App />
-      </Router>
-    </AuthProvider>
+    <SnackbarProvider 
+      maxSnack={3} 
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}>
+      <AuthProvider>
+        <Router>
+          <App />
+        </Router>
+      </AuthProvider>
+    </SnackbarProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

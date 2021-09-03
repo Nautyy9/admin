@@ -7,8 +7,9 @@ import { firebase } from "../initFirebase";
 import CheckBoxTable from '../partials/common/CheckBoxTable';
 import Dropdown from '../partials/actions/Dropdown';
 import Loader from '../utils/Loader';
+import { withSnackbar } from 'notistack';
 
-function DeviceDetails() {
+function DeviceDetails({enqueueSnackbar}) {
   const [stores, setStores] = useState([])
   const [storeID, setStoreID] = useState('')
   const [deviceType, setDeviceType] = useState('Shelve')
@@ -73,21 +74,26 @@ function DeviceDetails() {
         setIndex('deviceID')
     }
     else{
-        alert('No Matching Type Found')
+        enqueueSnackbar("No Matching Type Found",{variant:"warning"})
         return 
     }
-    let response = db.ref(`${ref}${device}`)
-    response.once('value',(snapshot)=>{
-        let data =  snapshot.val()
-        console.log(data)
-        if(deviceType === 'Shelve'){
-            transformData(data)
-        }
-        else{
-            computeExtraHeaders(data)
-        }
+    try{
+      let response = db.ref(`${ref}${device}`)
+      response.once('value',(snapshot)=>{
+          let data =  snapshot.val()
+          // console.log(data)
+          if(deviceType === 'Shelve'){
+              transformData(data)
+          }
+          else{
+              computeExtraHeaders(data)
+          }
 
-    })
+      })
+    }
+    catch(error){
+      enqueueSnackbar(error.message,{variant:"error"})
+    }
   }
 
   const getStores = () => {
@@ -141,7 +147,7 @@ function DeviceDetails() {
         else{
             data.push(id)
         }
-        console.log(data)
+        // console.log(data)
         setSelectedDevice(data)
       }
   }
@@ -257,4 +263,4 @@ function DeviceDetails() {
   );
 }
 
-export default DeviceDetails;
+export default withSnackbar(DeviceDetails);

@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { placeholderColor } from "tailwindcss/defaultTheme";
 import Transition from "../../utils/Transition";
 
 const Dropdown = ({data,selected,setSelected,placeholder}) => {

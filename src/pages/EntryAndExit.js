@@ -9,7 +9,7 @@ import Dropdown from '../partials/actions/Dropdown';
 import { firebase } from "../initFirebase";
 import { AuthContext } from '../context/auth';
 
-function EntryAndExit() {
+function EntryAndExit({enqueueSnackbar}) {
   const [entryData, setEntryData] = useState([])
   const [exitData, setExitData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -33,7 +33,7 @@ function EntryAndExit() {
       })
     }
     catch(err){
-      alert(err.message)
+      enqueueSnackbar(err.message,{variant:"error"})
     }
   }
 
@@ -50,7 +50,7 @@ function EntryAndExit() {
       })
     }
     catch(err){
-      alert(err.message)
+      enqueueSnackbar(err.message,{variant:"error"})
     }
   }
 
@@ -70,7 +70,7 @@ function EntryAndExit() {
       setStoreSlug(store.id)
     }
     else{
-      alert('Something Went Wrong !')
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
     }
   }
 

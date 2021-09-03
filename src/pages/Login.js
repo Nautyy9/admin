@@ -2,24 +2,27 @@ import React, { useState, useEffect, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
+import { withSnackbar } from "notistack";
 
-function Login({history}) {
+function Login({history,enqueueSnackbar}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   const [loading,setLoading] = useState(false)
   // const db = firebase.firestore()
 
-  console.log('login')
+  // console.log('login')
 
   const firebaseLogin = async () => {
     try{
       const response = await firebase.auth().signInWithEmailAndPassword(email, password)
       // console.log(response)
+      enqueueSnackbar('Logged In Successfully',{variant:"success"})
       setLoading(false)
       history.push("/")
     }
     catch(error){
-      alert(error.message)
+      // alert(error.message)
+      enqueueSnackbar(error.message,{variant:"error"})
       setLoading(false)
     }   
   }
@@ -33,7 +36,13 @@ function Login({history}) {
 
   const handleLogin = (e) => {
     e.preventDefault()
-    if(email && password){
+    if(!email){
+      enqueueSnackbar('Please Enter Email',{variant:"warning"})
+    }
+    else if(!password){
+      enqueueSnackbar('Please Enter Password',{variant:"warning"})
+    }
+    else{
       setLoading(true)
       firebaseLogin()
     }
@@ -108,4 +117,5 @@ function Login({history}) {
   );
 }
 
-export default withRouter(Login)
+const alertHOC = withSnackbar(Login)
+export default withRouter(alertHOC)

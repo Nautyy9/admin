@@ -4,8 +4,9 @@ import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth"
 import DetailTable from "../partials/common/DetailTable"
 import Dropdown from "../partials/actions/Dropdown"
+import { withSnackbar } from "notistack"
 
-const ViewTeam = () => {
+const ViewTeam = ({enqueueSnackbar}) => {
     const [users,setUsers] = useState([])
     const [stores, setStores] = useState([])
     const [filteredUsers, setFilteredUsers] = useState([])
@@ -27,7 +28,7 @@ const ViewTeam = () => {
         setUsers(data)
       }
       catch(error){
-        alert(error.message)
+        enqueueSnackbar(error.message,{variant:"error"})
       }  
     }
 
@@ -107,5 +108,5 @@ const ViewTeam = () => {
     )
 }
 
-export default ViewTeam
+export default withSnackbar(ViewTeam)
 

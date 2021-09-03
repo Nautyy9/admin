@@ -9,10 +9,11 @@ import { ShelfAPI } from "../api/shelfApi";
 
 import { firebase } from "../initFirebase"
 import { AuthContext } from '../context/auth';
+import { withSnackbar } from 'notistack';
 
 const db = firebase.database()
 
-function Shelves() {
+function Shelves({enqueueSnackbar}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ShelfData, setShelfData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -50,7 +51,7 @@ function Shelves() {
       })
       
     } catch (error) {
-        console.log('error-error')
+      enqueueSnackbar(error.message,{variant:"error"})
     }
   }
 
@@ -70,7 +71,7 @@ function Shelves() {
       setStoreSlug(store.id)
     }
     else{
-      alert('Something Went Wrong !')
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
     }
   }
 
@@ -149,4 +150,4 @@ function Shelves() {
   );
 }
 
-export default Shelves;
+export default withSnackbar(Shelves);
