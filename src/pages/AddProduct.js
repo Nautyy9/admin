@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 import Transition from "../utils/Transition";
+import Sidebar from "../partials/Sidebar";
 import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 import Header from "../partials/Header";
@@ -18,6 +19,7 @@ function AddProduct({enqueueSnackbar}) {
   const [location,setLocation] = useState("")
   const [shelveID,setShelveID] = useState()
   const [client, setClient] = useState()
+  const [userrole,setuserrole] = useState(null)
   const db = firebase.database()
   const dropdown = useRef(null);
   const trigger = useRef(null);
@@ -32,6 +34,12 @@ function AddProduct({enqueueSnackbar}) {
     // port:8000,
     keepalive:60
   };
+
+  useEffect(()=>{
+    console.log('role',role)
+    console.log(role === 'superadmin')
+    setuserrole(role)
+  },[role])
 
   // useEffect(()=>{
   //   let url = window.location.protocol === 'https:' ? 'wss://15.206.66.251:8084/mqtt' : 'ws://15.206.66.251:8083/mqtt'
@@ -210,9 +218,20 @@ function AddProduct({enqueueSnackbar}) {
 
 
   return (
-    <>
+    <div className="flex h-screen w-screen overflow-hidden">
+
+      {/* Sidebar */}
+      {
+        ['superadmin','admin'].includes(userrole) &&
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      }
+      {/* Content area */}
+      <div className=" flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+
+        {/*  Site header */}
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <main>
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} showSidebar={false} />
+        {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} showSidebar={false} /> */}
           <div className="container mx-auto px-4 h-full mt-10">
             <div className="flex content-center justify-center h-full">
               <div className="w-full lg:w-6/12 md:w-8/12 sm:w-8/12 px-4">
@@ -362,7 +381,8 @@ function AddProduct({enqueueSnackbar}) {
             </div>
           </div>
       </main>
-    </>
+    </div>
+    </div>
   );
 }
 

@@ -194,8 +194,7 @@ function DeviceDetails({enqueueSnackbar}) {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Content area */}
-      <div className=" flex flex-col flex-1 overflow-y-auto overflow-x-h
-      idden">
+      <div className=" flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
 
         {/*  Site header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

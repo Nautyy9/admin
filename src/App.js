@@ -71,6 +71,7 @@ function App() {
           <PrivateRoute path="/devices" component={DeviceDetails} type="private"/>
           <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
           <PrivateRoute path="/team" component={Team} type="private"/>
+          <PrivateRoute path="/product" component={AddProduct} type="private"/>
           {/* <Redirect to="/"/> */}
         </>
         }  
