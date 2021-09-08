@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Transition from "../../utils/Transition";
 
-const Dropdown = ({data,selected,setSelected,placeholder}) => {
+const Dropdown = ({data,selected,setSelected,placeholder,className}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdown = useRef(null);
     const trigger = useRef(null);
@@ -36,7 +36,7 @@ const Dropdown = ({data,selected,setSelected,placeholder}) => {
     }
 
     return(
-        <div className="flex flex-col relative">
+        <div className={"flex flex-col relative "+className}>
             <div
                 ref={trigger}
                 className="border-2 border-gray-300 px-3 py-3 placeholder-gray-400 font-semibold text-gray-500 bg-white rounded text-sm shadow outline"

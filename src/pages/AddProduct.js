@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 import Transition from "../utils/Transition";
 import Sidebar from "../partials/Sidebar";
+import Dropdown from "../partials/actions/Dropdown";
 import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 import Header from "../partials/Header";
@@ -19,10 +20,11 @@ function AddProduct({enqueueSnackbar}) {
   const [location,setLocation] = useState("")
   const [shelveID,setShelveID] = useState()
   const [client, setClient] = useState()
+  const [storeID, setStoreID] = useState(null)
+  const [storeSlug, setStoreSlug] = useState('dummydata')
+  const [stores, setStores] = useState([])
   const [userrole,setuserrole] = useState(null)
   const db = firebase.database()
-  const dropdown = useRef(null);
-  const trigger = useRef(null);
   const {role,store} = useContext(AuthContext)
 
   const options = {
@@ -36,8 +38,6 @@ function AddProduct({enqueueSnackbar}) {
   };
 
   useEffect(()=>{
-    console.log('role',role)
-    console.log(role === 'superadmin')
     setuserrole(role)
   },[role])
 
@@ -69,29 +69,12 @@ function AddProduct({enqueueSnackbar}) {
     setShelveID(null)
   }
 
-  useEffect(()=>{
-    const keyHandler = ({ keyCode }) => {
-      if (!dropdownOpen || keyCode !== 27) return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  })
-
-  useEffect(() => {
-    const clickHandler = ({ target }) => {
-      if (!dropdownOpen || dropdown.current.contains(target) || trigger.current.contains(target)) return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
-
   const transformData = (data) =>{
     const result = []
     Object.keys(data).map(each=>{
       result.push({
         "id":each,
+        "name":each,
         "data":data[each]
       })
     })
@@ -111,10 +94,6 @@ function AddProduct({enqueueSnackbar}) {
     })
 
   }
-
-  useEffect(()=>{
-    getShelveData()
-  },[])
 
   const addProduct = async () => {
     try{
@@ -168,6 +147,44 @@ function AddProduct({enqueueSnackbar}) {
     e.preventDefault()
     setDropdownOpen(!dropdownOpen)
   }
+
+  const getStores = () => {
+    const ref = db.ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
+
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      // console.log(store)
+      setStoreID(store.name)
+      setStoreSlug(store.id)
+    }
+    else{
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
+    }
+  }
+
+  useEffect(()=>{
+    // setIsLoading(true)
+    // fetchShelfData()
+    getShelveData()
+    if(['superadmin','admin'].includes(role) ){
+      console.log(role)
+      getStores()
+    }
+    if(store){
+      setStoreID(store)
+    }
+    // setIsLoading(false)
+  },[])
+
+  // useEffect(()=>{
+  //   fetchShelfData() 
+  // },[storeSlug])
 
   const passToMQTT = (e) => {
     e.preventDefault()
@@ -246,46 +263,17 @@ function AddProduct({enqueueSnackbar}) {
                         >
                           Shelve ID
                         </label>
-
-                        <div
-                          ref={trigger}
-                          className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow outline w-full"
-                          aria-haspopup="true"
-                          onClick={handleClick}
-                          aria-expanded={dropdownOpen}
-                        >
-                          { shelveID ? shelveID: 'Select Shelve'}
-                        </div>
-                        <Transition
-                          className="origin-top-right z-10 absolute top-full right-0 w-full bg-white border border-gray-200 py-1.5 rounded shadow-lg overflow-hidden mt-1"
-                          show={dropdownOpen}
-                          enter="transition ease-out duration-200 transform"
-                          enterStart="opacity-0 -translate-y-2"
-                          enterEnd="opacity-100 translate-y-0"
-                          leave="transition ease-out duration-200"
-                          leaveStart="opacity-100"
-                          leaveEnd="opacity-0"
-                        >
-                          <div
-                            ref={dropdown}
-                            onFocus={() => setDropdownOpen(true)}
-                            onBlur={() => setDropdownOpen(false)}
-                          >
-                            <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200">
-                              {
-                                shelves && shelves.length > 0 ?
-                                shelves.map(shelve=>(
-                                  <div key={shelve.id} className="font-medium text-gray-800 py-1  hover:bg-indigo-400 hover:text-white cursor-pointer" onClick={(event)=>handleShelveClick(shelve.id,event)}>
-                                    {shelve.id}
-                                  </div>
-                                ))
-                                :
-                                <div key="no-data" className="font-medium text-gray-800 py-1">No Data Found</div>
-                                  
-                              }
-                            </div>
+                        <div className="space-y-10 mb-4">
+                          <div className="flex space-x-6">
+                            <Dropdown 
+                              className="w-screen"
+                              data={shelves} 
+                              placeholder='Select Shelve'
+                              selected={shelveID}
+                              setSelected={(id)=>setShelveID(id)}
+                            />
                           </div>
-                        </Transition>
+                        </div>
                       </div>
                       <div className="relative w-full mb-3">
                         <label
@@ -294,9 +282,24 @@ function AddProduct({enqueueSnackbar}) {
                         >
                           Store ID
                         </label>
-                        <div className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full">
-                          {store}
-                        </div>
+                        
+                        { role === 'superadmin' ?
+                          <div className="space-y-10 mb-4">
+                            <div className="flex space-x-6">
+                              <Dropdown 
+                                className="w-screen"
+                                data={stores} 
+                                placeholder='Select Store'
+                                selected={storeID}
+                                setSelected={(id)=>handleStoreChange(id)}
+                              />
+                            </div>
+                          </div>
+                          :
+                          <div className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full">
+                            {store}
+                          </div>
+                        }
                       </div>
                       <div className="relative w-full mb-3">
                         <label
