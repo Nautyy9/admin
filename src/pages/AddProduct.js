@@ -95,7 +95,16 @@ function AddProduct({enqueueSnackbar}) {
 
   }
 
-  const addProduct = async () => {
+  useEffect(()=>{
+    const response = db.ref('dummydata/smart-shelves/'+shelveID)
+    response.once('value',(snapshot)=>{
+        console.log('shelve data------',shelveID)
+        console.log(snapshot.val())
+    })
+
+  },[shelveID])
+
+  const addProduct = () => {
     try{
         const product = {
             itemID:itemName,
@@ -107,6 +116,7 @@ function AddProduct({enqueueSnackbar}) {
             totalPlaced:0,
             totalQty:0
         }
+        console.log('shelve ID',shelveID)
         db.ref('dummydata/smart-shelves/'+shelveID).update(product)
         // alert('Product Added successfully!')
         enqueueSnackbar("Product Added successfully!",{variant:"success"})

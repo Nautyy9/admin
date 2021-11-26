@@ -36,6 +36,7 @@ function Customer({enqueueSnackbar}) {
         "data":data[each]
       })
     })
+    // console.log('customer result')
     // console.log(result)
     // setCustomerData(result)
     computeExtraHeaders(result)
@@ -104,14 +105,20 @@ function Customer({enqueueSnackbar}) {
   // to compute total quantity and price for every customer
   const computeExtraHeaders = (data) => {
     data.map(each=>{
-      let detail = each.data.orders.reduce((acc,order)=>{
-        acc['total'] += order.itemPrice * order.quantity
-        acc['quantity'] += order.quantity
-        return acc
-      },{'total':0,'quantity':0})
-      // console.log(detail)
-      each.data['totalPrice'] = detail['total']
-      each.data['totalQty'] = detail['quantity']
+      if(each.data.orders){
+        let detail = each.data.orders.reduce((acc,order)=>{
+          acc['total'] += order.itemPrice * order.quantity
+          acc['quantity'] += order.quantity
+          return acc
+        },{'total':0,'quantity':0})
+        // console.log(detail)
+        each.data['totalPrice'] = detail['total']
+        each.data['totalQty'] = detail['quantity']
+      }
+      else{
+        each.data['totalPrice'] = 0
+        each.data['totalQty'] = 0
+      }
     })
     setCustomerData(data)
   }
