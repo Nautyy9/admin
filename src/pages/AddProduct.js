@@ -1,109 +1,154 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
 import Transition from "../utils/Transition";
+import Sidebar from "../partials/Sidebar";
+import Dropdown from "../partials/actions/Dropdown";
 import { firebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
 import Header from "../partials/Header";
-import { subscribe } from 'react-mqtt-client'
-var mqtt = require('mqtt')
+import mqtt from "mqtt";
+import { withSnackbar } from "notistack";
 
 
-function AddProduct({history}) {
+function AddProduct({enqueueSnackbar}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [shelves,setShelves] = useState({})
   const [itemName,setItemName] = useState("")
   const [itemWeight,setItemWeight] = useState(0)
+  const [minQuantity,setMinQuantity] = useState('')
   const [location,setLocation] = useState("")
   const [shelveID,setShelveID] = useState()
-  const [connected, setConnected] = useState(false)
+  const [client, setClient] = useState()
+  const [storeID, setStoreID] = useState(null)
+  const [storeSlug, setStoreSlug] = useState('dummydata')
+  const [stores, setStores] = useState([])
+  const [userrole,setuserrole] = useState(null)
   const db = firebase.database()
-  const dropdown = useRef(null);
-  const trigger = useRef(null);
+  const {role,store} = useContext(AuthContext)
 
   const options = {
-    protocol: 'ws',
+    defaultProtocol:'wss',
+    // defaultProtocol: window.location.protocol === 'https:' ? 'wss' : 'ws',
     // clientId uniquely identifies client
     // choose any string you wish
-    // clientId: 'b0908853',
+    clientId: 'b0908853',
     // port:8000,
-    // keepalive:60
+    keepalive:60
   };
-  let client = mqtt.connect('ws://15.206.66.251:8083/mqtt');
+
+  useEffect(()=>{
+    setuserrole(role)
+  },[role])
+
+  // useEffect(()=>{
+  //   let url = window.location.protocol === 'https:' ? 'wss://15.206.66.251:8084/mqtt' : 'ws://15.206.66.251:8083/mqtt'
+  //   let instance = mqtt.connect('wss://15.206.66.251:8084/mqtt',options);
+  //   console.log(instance)
+  //   if(instance){
+  //     instance.on('connect', () => {
+  //       console.log('connected')
+  //       setClient(instance)
+  //     });
+
+  //     instance.on('error', (err) => {
+  //       console.error('Connection error: ', err);
+  //       instance.end();
+  //     });
+  //   }
+  // },[])
   
 
   // client.subscribe('admin/shelve1/');
 
-  useEffect(()=>{
-    const keyHandler = ({ keyCode }) => {
-      if (!dropdownOpen || keyCode !== 27) return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  })
-
-  useEffect(() => {
-    const clickHandler = ({ target }) => {
-      if (!dropdownOpen || dropdown.current.contains(target) || trigger.current.contains(target)) return;
-      setDropdownOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
+  const clearData = () => {
+    setItemName("")
+    setItemWeight(0)
+    setLocation("")
+    setMinQuantity(null)
+    setShelveID(null)
+  }
 
   const transformData = (data) =>{
     const result = []
     Object.keys(data).map(each=>{
       result.push({
         "id":each,
+        "name":each,
         "data":data[each]
       })
     })
-    console.log(result)
+    // console.log(result)
     setShelves(result)
   }
 
   const getShelveData = () => {
     const response = db.ref('dummydata/smart-shelves')
     response.once('value',(snapshot)=>{
-        transformData(snapshot.val())
+        if(snapshot.val()){
+          transformData(snapshot.val())
+        }
+        else{
+          setShelves([])
+        }
     })
 
   }
 
   useEffect(()=>{
-    getShelveData()
-  },[])
+    const response = db.ref('dummydata/smart-shelves/'+shelveID)
+    response.once('value',(snapshot)=>{
+        console.log('shelve data------',shelveID)
+        console.log(snapshot.val())
+    })
 
-  const addProduct = async () => {
+  },[shelveID])
+
+  const addProduct = () => {
     try{
         const product = {
             itemID:itemName,
             netItemWeight:itemWeight,
-            location
+            location,
+            minQuantity:minQuantity?minQuantity:0,
+            status:'active',
+            totalPickup:0,
+            totalPlaced:0,
+            totalQty:0
         }
+        console.log('shelve ID',shelveID)
         db.ref('dummydata/smart-shelves/'+shelveID).update(product)
-        console.log('Product Added successfully!')
+        // alert('Product Added successfully!')
+        enqueueSnackbar("Product Added successfully!",{variant:"success"})
+        clearData()
     }
     catch(error){
-        console.log(error)
+      enqueueSnackbar(error.message,{variant:"error"})
     }
   }
 
-  const handleAddUser = (e) => {
+  const handleAddProduct = (e) => {
     e.preventDefault()
-    if(itemName && itemWeight && location && shelveID) {
-      addProduct()
+    if(!itemName){
+      enqueueSnackbar("Please Enter Item Name",{variant:"warning"})
+    }
+    else if(!itemWeight){
+      enqueueSnackbar("Please Enter Item Weight",{variant:"warning"})
+    }
+    else if(!shelveID){
+      enqueueSnackbar("Please Select Shelve",{variant:"warning"})
+    }
+    else if(!location){
+      enqueueSnackbar("Please Enter Location",{variant:"warning"})
     }
     else{
-        alert('Please add details')
+      addProduct()
     }
   }
 
   const handleShelveClick = (id,e) => {
     e.preventDefault()
-    console.log('selected',id)
+    // console.log('selected',id)
     setShelveID(id)
     setDropdownOpen(!dropdownOpen)
   }
@@ -113,11 +158,49 @@ function AddProduct({history}) {
     setDropdownOpen(!dropdownOpen)
   }
 
+  const getStores = () => {
+    const ref = db.ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
+
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      // console.log(store)
+      setStoreID(store.name)
+      setStoreSlug(store.id)
+    }
+    else{
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
+    }
+  }
+
+  useEffect(()=>{
+    // setIsLoading(true)
+    // fetchShelfData()
+    getShelveData()
+    if(['superadmin','admin'].includes(role) ){
+      console.log(role)
+      getStores()
+    }
+    if(store){
+      setStoreID(store)
+    }
+    // setIsLoading(false)
+  },[])
+
+  // useEffect(()=>{
+  //   fetchShelfData() 
+  // },[storeSlug])
+
   const passToMQTT = (e) => {
     e.preventDefault()
     const product = {
-      itemName,
-      weight:itemWeight,
+      itemID:itemName,
+      netItemWeight:itemWeight,
       location,
       shelveID
     }
@@ -133,33 +216,49 @@ function AddProduct({history}) {
 
   }
 
-  useEffect(() => {
-    if (client) {
-      console.log(client)
-      client.on('connect', () => {
-        console.log('connected')
-        // setConnected(!connected)
-        // client.publish('admin/shelve1/',"Hello 123")
-      });
-      client.on('error', (err) => {
-        console.error('Connection error: ', err);
-        client.end();
-      });
-      client.on('reconnect', () => {
-        console.log('reconnecting')
-      });
-      client.on('message', (topic, message) => {
-        const payload = { topic, message: message.toString() };
+  // useEffect(() => {
+  //   // if (client) {
+  //     console.log(client)
+  //     // client.on('connect', () => {
+  //     //   console.log('connected')
+  //     //   // setConnected(!connected)
+  //     //   // client.publish('admin/shelve1/',"Hello 123")
+  //     // });
+
+  //     client.on('connect', () => {
+  //       console.log('connected')
+  //       // setClient(instance)
+  //     });
+  //     client.on('error', (err) => {
+  //       console.error('Connection error: ', err);
+  //       client.end();
+  //     });
+  //     client.on('reconnect', () => {
+  //       console.log('reconnecting')
+  //     });
+  //     client.on('message', (topic, message) => {
+  //       const payload = { topic, message: message.toString() };
         
-      });
-    }
-  }, [client]);
+  //     });
+  //   // }
+  // }, [client]);
 
 
   return (
-    <>
+    <div className="flex h-screen w-screen overflow-hidden">
+
+      {/* Sidebar */}
+      {
+        ['superadmin','admin'].includes(userrole) &&
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      }
+      {/* Content area */}
+      <div className=" flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+
+        {/*  Site header */}
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <main>
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} showSidebar={false} />
+        {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} showSidebar={false} /> */}
           <div className="container mx-auto px-4 h-full mt-10">
             <div className="flex content-center justify-center h-full">
               <div className="w-full lg:w-6/12 md:w-8/12 sm:w-8/12 px-4">
@@ -174,46 +273,43 @@ function AddProduct({history}) {
                         >
                           Shelve ID
                         </label>
-
-                        <div
-                          ref={trigger}
-                          className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow outline w-full"
-                          aria-haspopup="true"
-                          onClick={handleClick}
-                          aria-expanded={dropdownOpen}
-                        >
-                          { shelveID ? shelveID: 'Select Shelve'}
+                        <div className="space-y-10 mb-4">
+                          <div className="flex space-x-6">
+                            <Dropdown 
+                              className="w-screen"
+                              data={shelves} 
+                              placeholder='Select Shelve'
+                              selected={shelveID}
+                              setSelected={(id)=>setShelveID(id)}
+                            />
+                          </div>
                         </div>
-                        <Transition
-                          className="origin-top-right z-10 absolute top-full right-0 w-full bg-white border border-gray-200 py-1.5 rounded shadow-lg overflow-hidden mt-1"
-                          show={dropdownOpen}
-                          enter="transition ease-out duration-200 transform"
-                          enterStart="opacity-0 -translate-y-2"
-                          enterEnd="opacity-100 translate-y-0"
-                          leave="transition ease-out duration-200"
-                          leaveStart="opacity-100"
-                          leaveEnd="opacity-0"
+                      </div>
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-item-name"
                         >
-                          <div
-                            ref={dropdown}
-                            onFocus={() => setDropdownOpen(true)}
-                            onBlur={() => setDropdownOpen(false)}
-                          >
-                            <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200">
-                              {
-                                shelves && shelves.length > 0 ?
-                                shelves.map(shelve=>(
-                                  <div key={shelve.id} className="font-medium text-gray-800 py-1  hover:bg-indigo-400 hover:text-white cursor-pointer" onClick={(event)=>handleShelveClick(shelve.id,event)}>
-                                    {shelve.id}
-                                  </div>
-                                ))
-                                :
-                                <div key="no-data" className="font-medium text-gray-800 py-1">No Data Found</div>
-                                  
-                              }
+                          Store ID
+                        </label>
+                        
+                        { role === 'superadmin' ?
+                          <div className="space-y-10 mb-4">
+                            <div className="flex space-x-6">
+                              <Dropdown 
+                                className="w-screen"
+                                data={stores} 
+                                placeholder='Select Store'
+                                selected={storeID}
+                                setSelected={(id)=>handleStoreChange(id)}
+                              />
                             </div>
                           </div>
-                        </Transition>
+                          :
+                          <div className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 semibold text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full">
+                            {store}
+                          </div>
+                        }
                       </div>
                       <div className="relative w-full mb-3">
                         <label
@@ -254,6 +350,23 @@ function AddProduct({history}) {
                           className="block uppercase text-gray-700 text-xs font-bold mb-2"
                           htmlFor="grid-location"
                         >
+                          Minimum Quantity 
+                        </label>
+                        <input
+                          type="number"
+                          className="border-1 border-gray-300 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring-indigo-600 w-full"
+                          placeholder="Min Quantity"
+                          value={minQuantity}
+                          onChange={(e)=>{setMinQuantity(e.target.value)}}
+                          style={{ transition: "all .15s ease" }}
+                        />
+                      </div>
+
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-location"
+                        >
                           Location
                         </label>
                         <input
@@ -268,7 +381,7 @@ function AddProduct({history}) {
 
                       <div className="text-center mt-6">
                         <button 
-                          onClick={passToMQTT}
+                          onClick={handleAddProduct}
                           className="btn uppercase px-3 py-2 bg-indigo-500 hover:bg-indigo-400 text-white focus:outline-none focus:ring focus:ring-offset-2 focus:ring-indigo-500 focus:ring-opacity-80 cursor-pointer">
                             Add Product
                         </button> 
@@ -281,8 +394,9 @@ function AddProduct({history}) {
             </div>
           </div>
       </main>
-    </>
+    </div>
+    </div>
   );
 }
 
-export default withRouter(AddProduct)
+export default withSnackbar(AddProduct)

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import {
   Switch,
   Route,
   useLocation,
-  Link
+  Link,
+  Redirect
 } from 'react-router-dom';
 import { firebase } from "./initFirebase";
 import PrivateRoute from './utils/PrivateRoute';
@@ -11,8 +12,8 @@ import './css/style.scss';
 
 import { focusHandling } from 'cruip-js-toolkit';
 import './charts/ChartjsConfig';
-import { AuthProvider } from './context/auth';
-import { Connector } from 'react-mqtt-client'
+import { AuthContext } from './context/auth';
+import Loader from './utils/Loader';
 
 // Import pages
 import Login from './pages/Login';
@@ -22,6 +23,7 @@ import Shelves from './pages/Shelves';
 import EntryAndExit from './pages/EntryAndExit';
 import Team from './pages/Team';
 import AddProduct from './pages/AddProduct';
+import DeviceDetails from './pages/DeviceDetails';
 
 const PageNotFound = () => {
   return(
@@ -37,66 +39,45 @@ const PageNotFound = () => {
 }
 
 function App() {
-  const [role, setRole] = useState(null)
+  const { currentUser, role } = useContext(AuthContext)
   const location = useLocation();
-  const db = firebase.firestore()
-  const user = firebase.auth().currentUser
 
-  const checkRole = async ()=>{
-    if(user){
-      const doc = await db.collection('users').doc(user.uid).get()
-      if(!doc.exists){
-        console.log('setting role')
-        await db.collection('users').doc(user.uid).set({role:"superadmin"})
-      } 
-      else{
-        const role = doc.data().role
-        console.log('role',role)
-        setRole(role)
-      }  
-    }
-  }
-
-  // useEffect(()=>{
-    
-  // })
 
   useEffect(() => {
     document.querySelector('html').style.scrollBehavior = 'auto'
     window.scroll({ top: 0 })
     document.querySelector('html').style.scrollBehavior = ''
     focusHandling('outline');
-    checkRole()
+    // checkRole()
   }, [location.pathname]); // triggered on route change
 
-  var options = {
-    protocol: 'mqtts',
-    // clientId uniquely identifies client
-    // choose any string you wish
-    clientId: 'ddengine-01'    
-};
 
   return (
     <>
-      <AuthProvider>
-        <Switch>
-          <PrivateRoute path="/login" component={Login} type="guest"/>
-          { role === 'staff' ? 
-            <PrivateRoute path="/" component={AddProduct} type="private" staff={true}/>
-          :
-
+      
+      <Switch>
+        <PrivateRoute path="/login" component={Login} type="guest"/>
+        { role === 'staff' ? 
           <>
-            <PrivateRoute exact path="/" component={Dashboard} type="private"/>
-            <PrivateRoute path="/customers" component={Customer} type="private"/>
-            <PrivateRoute path="/shelves" component={Shelves} type="private"/>
-            <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
-            <PrivateRoute path="/team" component={Team} type="private"/>
+            <PrivateRoute exact path="/" component={AddProduct} type="private" staff={true}/>
+            {/* <Redirect to="/"/> */}
           </>
-          }  
-          
-          <Route component={PageNotFound}/>
-        </Switch>
-      </AuthProvider>
+        :
+
+        <>
+          <PrivateRoute exact path="/" component={Dashboard} type="private"/>
+          <PrivateRoute path="/customers" component={Customer} type="private"/>
+          <PrivateRoute path="/shelves" component={Shelves} type="private"/>
+          <PrivateRoute path="/devices" component={DeviceDetails} type="private"/>
+          <PrivateRoute path="/entryexit" component={EntryAndExit} type="private"/>
+          <PrivateRoute path="/team" component={Team} type="private"/>
+          <PrivateRoute path="/product" component={AddProduct} type="private"/>
+          {/* <Redirect to="/"/> */}
+        </>
+        }  
+        <Route path="*" component={PageNotFound}/>
+        
+      </Switch>
     </>
   );
 }

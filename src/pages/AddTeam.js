@@ -1,32 +1,52 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withRouter, Redirect } from "react-router-dom";
-import { secondaryFirebase } from "../initFirebase"
+import Dropdown from "../partials/actions/Dropdown";
+import { firebase, secondaryFirebase } from "../initFirebase"
 import { AuthContext } from "../context/auth";
+import { withSnackbar } from "notistack";
 
-function AddTeam({history}) {
+function AddTeam({enqueueSnackbar}) {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
+  const [stores, setStores] = useState('')
+  const [storeID, setStoreID] = useState('')
   const db = secondaryFirebase.firestore()
   const {role} = useContext(AuthContext)
 
-  const addUser = async (role) => {
+  const addUser = async (selected_role) => {
     try{
-      if(role){
+      if(selected_role){
         const response = await secondaryFirebase.auth().createUserWithEmailAndPassword(email, password)
-        await db.collection('users').doc(response.user.uid).set({role:role})
-        console.log('User registered successfully!')
-        console.log(response.user)
+        await db.collection('users').doc(response.user.uid).set({email:email,role:selected_role,store:storeID})
+        alert('User registered successfully!')
         secondaryFirebase.auth().signOut();
+        clearData()
       }
     }
     catch(error){
-      console.log(error)
+      enqueueSnackbar(error.message,{variant:"error"})
     }
+  }
+
+  const clearData = () => {
+    setEmail("")
+    setPassword("")
+    setStoreID(null)
   }
 
   const handleAddUser = (e) => {
     e.preventDefault()
-    if(email && password) {
+    if(!email){
+      enqueueSnackbar("Please Enter Email",{variant:"warning"})
+    }
+    else if(!password){
+      enqueueSnackbar("Please Enter Password",{variant:"warning"})
+    }
+    else if(!storeID){
+      enqueueSnackbar("Please Select Store",{variant:"warning"})
+    }
+    else{
+      // console.log('adding new user')
       let new_role;
       if(role === 'superadmin'){
         new_role = "admin"
@@ -34,9 +54,32 @@ function AddTeam({history}) {
       else if(role === 'admin'){
         new_role = "staff"
       }
+      console.log(role)
       addUser(new_role)
     }
   }
+
+  const getStores = () => {
+    const ref = firebase.database().ref('stores')
+    ref.once('value',(snapshot)=>{
+      let data = snapshot.val()
+      setStores(data)
+    })
+  }
+
+  const handleStoreChange = (name) => {
+    const store = stores.find(each=> each.name === name.trim())
+    if(store){
+      setStoreID(store.id)
+    }
+    else{
+      enqueueSnackbar("Something Went Wrong !",{variant:"error"})
+    }
+  }
+
+  useEffect(()=>{
+    getStores()
+  },[])
 
 
   return (
@@ -83,6 +126,22 @@ function AddTeam({history}) {
                         />
                       </div>
 
+                      <div className="relative w-full mb-3">
+                        <label
+                          className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                          htmlFor="grid-password"
+                        >
+                          Store
+                        </label>
+                        <Dropdown
+                          className='mr-0'
+                          data={stores}
+                          placeholder='Select Store'
+                          selected={storeID}
+                          setSelected={handleStoreChange}
+                        />
+                      </div>
+
                       <div className="text-center mt-6">
                         <button 
                           onClick={handleAddUser}
@@ -102,4 +161,4 @@ function AddTeam({history}) {
   );
 }
 
-export default withRouter(AddTeam)
+export default withSnackbar(AddTeam)

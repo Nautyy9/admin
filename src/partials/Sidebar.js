@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
+import Logo from '../images/djt_logo.png'
+
 function Sidebar({
   sidebarOpen,
   setSidebarOpen
@@ -47,7 +49,7 @@ function Sidebar({
       >
 
         {/* Sidebar header */}
-        <div className="flex justify-between mb-10 pr-3 sm:px-2">
+        <div className="flex justify-between mb-10 pr-3 sm:px-2 py-2 bg-gray-900">
           {/* Close button */}
           <button
             ref={trigger}
@@ -62,8 +64,10 @@ function Sidebar({
             </svg>
           </button>
           {/* Logo */}
-          <NavLink exact to="/" className="block">
-            <svg width="32" height="32" viewBox="0 0 32 32">
+          <NavLink exact to="/" className="block flex items-center space-x-4">
+            <img src={Logo} className="w-16 h-16"/>
+            <div className="text-white font-semibold text-lg">DJT Corp</div>
+            {/* <svg width="32" height="32" viewBox="0 0 32 32">
               <defs>
                 <linearGradient x1="28.538%" y1="20.229%" x2="100%" y2="108.156%" id="logo-a">
                   <stop stopColor="#A5B4FC" stopOpacity="0" offset="0%" />
@@ -78,7 +82,7 @@ function Sidebar({
               <path d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z" fill="#4F46E5" />
               <path d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z" fill="url(#logo-a)" />
               <path d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z" fill="url(#logo-b)" />
-            </svg>
+            </svg> */}
           </NavLink>
         </div>
 
@@ -146,17 +150,17 @@ function Sidebar({
             </li>
 
             {/* Campaigns */}
-            {/* <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'campaigns' && 'bg-gray-900'}`}>
-              <NavLink exact to="/" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'campaigns' && 'hover:text-gray-200'}`}>
+            <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'product' && 'bg-gray-900'}`}>
+              <NavLink exact to="/product" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'product' && 'hover:text-gray-200'}`}>
                 <div className="flex flex-grow">
                   <svg className="flex-shrink-0 h-6 w-6 mr-3" viewBox="0 0 24 24">
-                    <path className={`fill-current text-gray-600 ${page === 'campaigns' && 'text-indigo-500'}`} d="M20 7a.75.75 0 01-.75-.75 1.5 1.5 0 00-1.5-1.5.75.75 0 110-1.5 1.5 1.5 0 001.5-1.5.75.75 0 111.5 0 1.5 1.5 0 001.5 1.5.75.75 0 110 1.5 1.5 1.5 0 00-1.5 1.5A.75.75 0 0120 7zM4 23a.75.75 0 01-.75-.75 1.5 1.5 0 00-1.5-1.5.75.75 0 110-1.5 1.5 1.5 0 001.5-1.5.75.75 0 111.5 0 1.5 1.5 0 001.5 1.5.75.75 0 110 1.5 1.5 1.5 0 00-1.5 1.5A.75.75 0 014 23z" />
-                    <path className={`fill-current text-gray-400 ${page === 'campaigns' && 'text-indigo-300'}`} d="M17 23a1 1 0 01-1-1 4 4 0 00-4-4 1 1 0 010-2 4 4 0 004-4 1 1 0 012 0 4 4 0 004 4 1 1 0 010 2 4 4 0 00-4 4 1 1 0 01-1 1zM7 13a1 1 0 01-1-1 4 4 0 00-4-4 1 1 0 110-2 4 4 0 004-4 1 1 0 112 0 4 4 0 004 4 1 1 0 010 2 4 4 0 00-4 4 1 1 0 01-1 1z" />
+                    <path className={`fill-current text-gray-600 ${page === 'product' && 'text-indigo-500'}`} d="M20 7a.75.75 0 01-.75-.75 1.5 1.5 0 00-1.5-1.5.75.75 0 110-1.5 1.5 1.5 0 001.5-1.5.75.75 0 111.5 0 1.5 1.5 0 001.5 1.5.75.75 0 110 1.5 1.5 1.5 0 00-1.5 1.5A.75.75 0 0120 7zM4 23a.75.75 0 01-.75-.75 1.5 1.5 0 00-1.5-1.5.75.75 0 110-1.5 1.5 1.5 0 001.5-1.5.75.75 0 111.5 0 1.5 1.5 0 001.5 1.5.75.75 0 110 1.5 1.5 1.5 0 00-1.5 1.5A.75.75 0 014 23z" />
+                    <path className={`fill-current text-gray-400 ${page === 'product' && 'text-indigo-300'}`} d="M17 23a1 1 0 01-1-1 4 4 0 00-4-4 1 1 0 010-2 4 4 0 004-4 1 1 0 012 0 4 4 0 004 4 1 1 0 010 2 4 4 0 00-4 4 1 1 0 01-1 1zM7 13a1 1 0 01-1-1 4 4 0 00-4-4 1 1 0 110-2 4 4 0 004-4 1 1 0 112 0 4 4 0 004 4 1 1 0 010 2 4 4 0 00-4 4 1 1 0 01-1 1z" />
                   </svg>
-                  <span className="text-sm font-medium">Campaigns</span>
+                  <span className="text-sm font-medium">Add Product</span>
                 </div>
               </NavLink>
-            </li> */}
+            </li>
             {/* Team */}
             <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page.startsWith('team') && 'bg-gray-900'}`}>
               <NavLink exact to="/team" className={`block text-gray-200 hover:text-white transition duration-150 ${page.startsWith('team-') && 'hover:text-gray-200'}`}>
@@ -203,19 +207,19 @@ function Sidebar({
             </li> */}
             
             {/* Applications */}
-            {/* <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'applications' && 'bg-gray-900'}`}>
-              <NavLink exact to="/" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'applications' && 'hover:text-gray-200'}`}>
+            <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'devices' && 'bg-gray-900'}`}>
+              <NavLink exact to="/devices" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'devices' && 'hover:text-gray-200'}`}>
                 <div className="flex flex-grow">
                   <svg className="flex-shrink-0 h-6 w-6 mr-3" viewBox="0 0 24 24">
-                    <circle className={`fill-current text-gray-400 ${page === 'applications' && 'text-indigo-300'}`} cx="18.5" cy="5.5" r="4.5" />
-                    <circle className={`fill-current text-gray-600 ${page === 'applications' && 'text-indigo-500'}`} cx="5.5" cy="5.5" r="4.5" />
-                    <circle className={`fill-current text-gray-600 ${page === 'applications' && 'text-indigo-500'}`} cx="18.5" cy="18.5" r="4.5" />
-                    <circle className={`fill-current text-gray-400 ${page === 'applications' && 'text-indigo-300'}`} cx="5.5" cy="18.5" r="4.5" />
+                    <circle className={`fill-current text-gray-400 ${page === 'devices' && 'text-indigo-300'}`} cx="18.5" cy="5.5" r="4.5" />
+                    <circle className={`fill-current text-gray-600 ${page === 'devices' && 'text-indigo-500'}`} cx="5.5" cy="5.5" r="4.5" />
+                    <circle className={`fill-current text-gray-600 ${page === 'devices' && 'text-indigo-500'}`} cx="18.5" cy="18.5" r="4.5" />
+                    <circle className={`fill-current text-gray-400 ${page === 'devices' && 'text-indigo-300'}`} cx="5.5" cy="18.5" r="4.5" />
                   </svg>
-                  <span className="text-sm font-medium">Applications</span>
+                  <span className="text-sm font-medium">Devices</span>
                 </div>
               </NavLink>
-            </li> */}
+            </li>
             {/* Settings */}
             <li className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${page === 'settings' && 'bg-gray-900'}`}>
               <NavLink exact to="/" className={`block text-gray-200 hover:text-white transition duration-150 ${page === 'settings' && 'hover:text-gray-200'}`}>
