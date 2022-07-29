@@ -4,7 +4,7 @@ import Transition from '../../utils/Transition.js';
 import DashboardCard07 from '../dashboard/DashboardCard07.js';
 import DetailTable from './DetailTable.js';
 
-function DetailModal({setOpen,setClose,data,headers}) {
+function DetailModal({setOpen,setClose,data,headers , removeHandler , orders, setOrders}) {
 
   const [detailOpen, setdetailOpen] = useState(false);
   
@@ -75,7 +75,7 @@ function DetailModal({setOpen,setClose,data,headers}) {
         <div className="bg-white overflow-auto max-w-2xl w-full max-h-full rounded shadow-lg" ref={detailContent}>
             {
                 data && data.length > 0 ?
-                <DetailTable label="Order Details" headers={headers} data={data} isLoading={false}/>
+                <DetailTable label="Order Details" orders={orders} setOrders={setOrders} removeHandler={removeHandler} headers={headers} data={data} isLoading={false}/>
                 :
                 "No Data Found"
             }

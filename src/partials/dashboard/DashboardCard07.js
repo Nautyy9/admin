@@ -1,22 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
 import DetailModal from '../common/DetailModal';
+import { firebase } from "../../initFirebase"
+const db = firebase.database();
+
 
 function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}) {
   const [detailOpen, setdetailOpen] = useState(false)
-  const [orders, setOrders] = useState({})
+  const [orders, setOrders] = useState([])
 
   const handleShowDetails = (customer,e) => {
     e.preventDefault();
     setOrders(customer.data.orders)
     setdetailOpen(true)
-    console.log('orders',customer.data.orders)
+
+ //removeHandler( orders);
+    console.log('orders',customer.data.orders);
   }
+
+  const removeHandler = (data) => {
+    console.log(data);
+    // data.filter((items) => {
+    //   console.log(items)
+    // })
+  //   data.map((item, index) => {
+  //     console.log('hiiiii');
+  //   // db.ref(`/dummydata/customers/${item}/orders/${index}`).remove()
+  // })
+  //    reference.on('value', (snapshot) => {
+  //   //  return this.http.delete(`https://admin-dashboard-1e2ed-default-rtdb.firebaseio.com/dummydata/customers/${item}/orders/${index}.json`).subscribe();
+  //   console.log(snapshot.val().customers[item].orders[index]); 
+  //   return snapshot.val().customers[item].orders[index].update(null)
+  //   });
+  //   const data =  reference.child('customers').child(item).child('cartID');
+  //    console.log("hrllo0", data);
+  //   reference.child('customers').child(`${item}`).child('cartID').remove()
+  //   console.log(item)
+  //   const ref = db.collection('dummydata').doc(item) ;
+  //   console.log(ref)
+  //   firebase.child(item).removeValue()
+  //   item.delete().then(() => {
+  //     console.log("Document successfully deleted!");
+  // }).catch((error) => {
+  //     console.error("Error removing document: ", error);
+  // });; 
+  }
+
 
   const order_headers = {
     "Item":"itemID",
     "Quantity":"quantity",
-    "Price":"itemPrice"
+    "Price":"itemPrice",
   }
 
   return (
@@ -92,7 +126,7 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
             </tbody>
           </table>
           { orders &&
-            <DetailModal setOpen={detailOpen} setClose={()=>setdetailOpen(false)} data={orders} headers={order_headers}/>
+            <DetailModal removeHandler={removeHandler} orders={orders} setOrders={setOrders} setOpen={detailOpen} setClose={()=>setdetailOpen(false)} data={orders} headers={order_headers}/>
           }
         </div>
       </div>

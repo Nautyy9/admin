@@ -24,23 +24,44 @@ function Customer({enqueueSnackbar}) {
     const ref = db.ref('stores')
     ref.once('value',(snapshot)=>{
       let data = snapshot.val()
+      // console.log(data);
       setStores(data)
     })
   }
 
   const transformData = (data) =>{
     const result = []
-    Object.keys(data).map(each=>{
+    Object.keys(data).map((each, index)=>{
+      // console.log(data)
+      // console.log(data[each] );
+      //  removeHandler(each, index)
+      // removeHandler(index)
+     
       result.push({
         "id":each,
         "data":data[each]
       })
     })
-    // console.log('customer result')
-    // console.log(result)
+    // console.log(result.data)
+    
+    // console.log(result[0].data.orders[0].itemID);
+    // console.log(result[0].id)
     // setCustomerData(result)
     computeExtraHeaders(result)
+    // removeHandler(result);
+    console.log("hjdfklajhsldkjfhaldfhl",customerData);
   }
+
+  const removeHandler = (data) => {
+    console.log(data);
+    data.map((items, index) => {
+      console.log(data); 
+      //  db.ref(``).remove()
+    })
+  }
+
+
+
 
   const fetchCustomerData = () => {
     const customerCollection = `${storeSlug}/customers`;
@@ -51,6 +72,8 @@ function Customer({enqueueSnackbar}) {
           // users.push()
           if(snapshot.val()){
             transformData(snapshot.val())
+            // console.log(snapshot.val());
+            // removeHeader(Object.keys(snapshot.val()));
           }
           else{
             setCustomerData([])
@@ -77,10 +100,12 @@ function Customer({enqueueSnackbar}) {
 
   const handleStoreChange = (name) => {
     const store = stores.find(each=> each.name === name.trim())
+    // console.log("hellloloo"+store)
     if(store){
-      // console.log(store)
+      //  console.log(store)
       setStoreID(store.name)
       setStoreSlug(store.id)
+      // console.log(store.id)
     }
     else{
       enqueueSnackbar("Something Went Wrong !",{variant:"error"})
@@ -92,7 +117,7 @@ function Customer({enqueueSnackbar}) {
     "Cart ID":"cartID",
     "In Time":"inTime",
     "Out Time":"outTime",
-    // "Total Items":"itemsInCart",
+    "Status": "status",
     "Total Quantity":"totalQty",
     "Total Price":"totalPrice"
     // "Total Pickup":"totalPickup",
@@ -157,6 +182,8 @@ function Customer({enqueueSnackbar}) {
                   label="Customer Details"
                   headers={headers}
                   data={customerData}
+                  removeHandler={removeHandler}
+                  customerData={customerData}
                   isLoading={isLoading}
                   hasActions={true}
                   showOrderTotal={true}

@@ -1,7 +1,9 @@
+import { log } from '@craco/craco/lib/logger';
 import React, { useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
 
-function DetailTable({label,headers,data,isLoading}) {
+function DetailTable({label,headers,data,isLoading , removeHandler, orders, setOrders}) {
+
 
 
   return (
@@ -23,26 +25,40 @@ function DetailTable({label,headers,data,isLoading}) {
               <tr>
                 {
                   Object.keys(headers).map(header=>(
-                    <th className="p-2" key={header}>
-                      <div className="font-semibold text-left">{header}</div>
+                    console.log(headers),
+                    <th className="p-1" key={header}>
+                      <div  className="font-semibold text-center">{header}</div>
                     </th>
                   ))
                 }
+                <th>
+                   Remove Item
+                </th>
               </tr>
             </thead>
             {/* Table body */}
-            <tbody className="text-sm font-medium divide-y divide-gray-100">
+            <tbody className="text-sm  font-medium divide-y divide-gray-100">
               {/* Row */}
               { 
                 data && data.map((result,index)=>(
                   <tr key={index}>
                     { 
-                      Object.keys(headers).map(column=>(
-                        <td className="p-2" key={column}>
-                          <div className="text-gray-800">{result[headers[column]]}</div>
+                      Object.keys(headers).map(column=>( 
+                        
+                        <td className="" key={column}>
+                          <div className="text-center text-gray-800">{result[headers[column]]}
+                       
+                         
+                          </div>
                         </td> 
                       ))
                     }
+                    
+                    <div className=' flex justify-center align-center'>
+                    <button type='button' className='p-1 m-1 button bg-red-600 rounded-lg text-white' onClick={()=>removeHandler((orders.map((items,key) =>  items.id)))}>Remove</button>
+                    </div>
+                    
+                    
                   </tr>
                 ))
               }

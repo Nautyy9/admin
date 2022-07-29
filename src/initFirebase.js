@@ -4,17 +4,18 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: "AIzaSyD3KDLb7tNgxyudTHdgxzC-Pk0dsWNK6yQ",
+  authDomain: "admin-dashboard-1e2ed.firebaseapp.com",
+  projectId: "admin-dashboard-1e2ed",
+  storageBucket: "admin-dashboard-1e2ed.appspot.com",
+  messagingSenderId: "1059586277528",
+  appId: "1:1059586277528:web:7df44ac7fa8a22e84510ed"
 };
 
 
 firebase.initializeApp(firebaseConfig)
-const secondaryFirebase = firebase.initializeApp(firebaseConfig,"Secondary")
+const secondaryFirebase = firebase.initializeApp(firebaseConfig, "Secondary")
 
-export { firebase,secondaryFirebase }
+export { firebase, secondaryFirebase }
+
+
