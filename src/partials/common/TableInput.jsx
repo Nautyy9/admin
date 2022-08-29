@@ -11,6 +11,8 @@ function TableInput( {index, setCheck, id, setValues, values , detailOpen, setDe
   
   const [button, setButton] = useState(false)
 
+  console.log(values)
+
   //  useEffect(() => {
   //   const clickHandler = ({ target }) => {
   //    if (!detailOpen || detailContent.current.contains(target)) 
@@ -25,6 +27,7 @@ useEffect(() => {
   const keyHandler = ({ keyCode }) => {
     if (!detailOpen || keyCode !== 27) return;
     setDetailOpen(false);
+    console.log(values)
   };
   document.addEventListener('keydown', keyHandler);
   return () => document.removeEventListener('keydown', keyHandler);
@@ -138,15 +141,15 @@ useEffect(() => {
       }
       {!button? <tr>
         <td>
-                <button type=' button' id='val' className=' flex flex-col  mt-2  hover:text-info  text-center btn-md w-full rounded-lg hover:bg-white btn btn-info text-white' onClick={(e)=>goBack(e, index)}>
+                <button type=' button' id='val' className=' flex flex-col  ml-6 mt-2  hover:text-info  text-center btn-md w-full rounded-md hover:bg-white btn btn-info text-white' onClick={(e)=>goBack(e, index)}>
                     <span className=" "> <BiArrowBack size={26}/></span>GO Back
                 </button>  
             </td>
       </tr>
       : <tr>
         <td>
-                <button type=' button' id='val' className=' flex flex-col  mt-2  hover:text-info  text-center btn-md w-full rounded-lg hover:bg-white btn btn-info text-white' onClick={(e)=>goBackFromNegate(e)}>
-                    <span className=" "> <BiArrowBack size={26}/></span>GO Back
+                <button type=' button' id='val' className=' flex relative flex-col  mt-2  hover:text-info  text-center btn-md w-full rounded-lg hover:bg-white btn btn-info text-white' onClick={(e)=>goBackFromNegate(e)}>
+                    <span className=" "> <BiArrowBack size={26}/></span>Go Back
                 </button>  
             </td>
       </tr>}

@@ -15,15 +15,19 @@ const [index, setIndex] = useState(0)
 
 
 useEffect(() =>{
-  setValues(data)
+  setValues(data);
 }, [data])
+
+function handleIds(id){
+  console.log(id);
+}
 
 const removeHandler = (data, id,e) => {
   e.preventDefault();
   alert('Data updated successfully')
   setDetailOpen(false)
   db.ref(`/dummydata/customers/${data.id}/orders/${id}/`).remove()
-     
+  handleIds(id)
 }
 
 const addHandler= (id) =>{
@@ -60,10 +64,10 @@ const addHandler= (id) =>{
                     </th>
                   ))
                 }
-                <th>
+                <th keu='new'>
                    {check? 'Submit' : "Remove Item"}
                 </th>
-                <th>
+                <th key='another'>
                    {!check? 'Add/Edit Item' : ''}
                 </th>
               </tr>
@@ -107,7 +111,7 @@ const addHandler= (id) =>{
                   </>
                 ))
               }
-              {check  ? <TableInput index={index} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  : ''}
+              {check && <TableInput index={index} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  }
               
                 {/* <td className="p-2">
                   <div className="text-center">2.4K</div>

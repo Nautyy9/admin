@@ -55,15 +55,20 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
             <thead className="text-xs uppercase text-gray-400 bg-gray-50 rounded-sm">
               <tr>
                 {
-                  Object.keys(headers).map(header=>(
-                    <th className="p-2" key={header}>
+                  Object.keys(headers).map((header, index)=>(
+                    <th className="p-2" key={index}>
                       <div className="font-semibold text-left">{header}</div>
                     </th>
                   ))
                 }
                 { hasActions &&
-                  <th className="p-2" key='Action'>
+                  <th className="p-2" >
                     <div className="font-semibold text-left">{action_header}</div>
+                  </th>
+                }
+                {
+                  <th className="p-2" >
+                    View Live Cam
                   </th>
                 }
               </tr>
@@ -117,6 +122,15 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
                             className="btn px-1 py-1 bg-indigo-500 hover:bg-indigo-600 btn-md text-white focus:outline-none">
                               View Details
                           </button> 
+                      </td>
+                    }
+                    {
+                      <td className='p-2 text-center' >
+                      <a 
+                            href='http://192.168.1.123:6680/html/' alt='cam'
+                            className="btn   pl-6 pr-6 text-center bg-red-500 transition ease-out duration-300  hover:animate-none animate-pulse   hover:bg-red-700 btn-md text-white focus:outline-none">
+                              Live
+                          </a> 
                       </td>
                     }
                   </tr>
