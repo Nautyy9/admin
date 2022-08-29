@@ -31,8 +31,9 @@ function Customer({enqueueSnackbar}) {
 
   const transformData = (data) =>{
     const result = []
+    console.log('data', data);
     Object.keys(data).map((each, index)=>{
-      // console.log(data)
+       console.log('watch ', each)
       // console.log(data[each] );
       //  removeHandler(each, index)
       // removeHandler(index)
@@ -42,23 +43,17 @@ function Customer({enqueueSnackbar}) {
         "data":data[each]
       })
     })
-    // console.log(result.data)
+     console.log('check',result)
     
     // console.log(result[0].data.orders[0].itemID);
     // console.log(result[0].id)
     // setCustomerData(result)
     computeExtraHeaders(result)
     // removeHandler(result);
-    console.log("hjdfklajhsldkjfhaldfhl",customerData);
   }
 
-  const removeHandler = (data) => {
-    console.log(data);
-    data.map((items, index) => {
-      console.log(data); 
-      //  db.ref(``).remove()
-    })
-  }
+
+
 
 
 
@@ -68,12 +63,12 @@ function Customer({enqueueSnackbar}) {
     try {
       const ref = db.ref(customerCollection);
       ref.on('value',(snapshot)=>{
-          // console.log('snapshot',snapshot.val())
+          //console.log('snapshot',snapshot.val())
           // users.push()
           if(snapshot.val()){
             transformData(snapshot.val())
             // console.log(snapshot.val());
-            // removeHeader(Object.keys(snapshot.val()));
+            
           }
           else{
             setCustomerData([])
@@ -129,14 +124,16 @@ function Customer({enqueueSnackbar}) {
 
   // to compute total quantity and price for every customer
   const computeExtraHeaders = (data) => {
+    console.log(data, 'values');
     data.map(each=>{
+      
       if(each.data.orders){
         let detail = each.data.orders.reduce((acc,order)=>{
           acc['total'] += order.itemPrice * order.quantity
           acc['quantity'] += order.quantity
           return acc
         },{'total':0,'quantity':0})
-        // console.log(detail)
+        //  console.log(each.data)
         each.data['totalPrice'] = detail['total']
         each.data['totalQty'] = detail['quantity']
       }
@@ -145,6 +142,7 @@ function Customer({enqueueSnackbar}) {
         each.data['totalQty'] = 0
       }
     })
+    //console.log(data, 'plus minyus');
     setCustomerData(data)
   }
 
@@ -182,8 +180,6 @@ function Customer({enqueueSnackbar}) {
                   label="Customer Details"
                   headers={headers}
                   data={customerData}
-                  removeHandler={removeHandler}
-                  customerData={customerData}
                   isLoading={isLoading}
                   hasActions={true}
                   showOrderTotal={true}

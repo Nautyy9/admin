@@ -19,15 +19,28 @@ admin.initializeApp({
 const db = admin.database()
 const shelfCollection = 'dummydata/smart-shelves';
 
-var client = mqtt.connect("mqtt://broker.hivemq.com")
-client.on("connect",function(){	
-    console.log("connected");
-})
+
+try{
+    var client = mqtt.connect("mqtt://broker.hivemq.com")
+    client.on("connect",function(){	
+        console.log("connected");
+    })
+}
+catch{
+    console.log('fail');
+    client.on('failure', function(){
+        console.log('fail')
+    })
+}
+
+
 
 app.post('/add_product', (req, res) => {
+    console.log(res);
     client.publish('admin/shelve1/',JSON.stringify(req.body),error => {
         if (error) {
             res.send(error)
+            console.log(res);
         }
     });
     res.send('Added Successfully')

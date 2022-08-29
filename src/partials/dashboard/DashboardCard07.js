@@ -1,56 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
 import DetailModal from '../common/DetailModal';
-import { firebase } from "../../initFirebase"
-const db = firebase.database();
+
+
 
 
 function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}) {
-  const [detailOpen, setdetailOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
   const [orders, setOrders] = useState([])
+  const [id, setId] = useState([]);
 
   const handleShowDetails = (customer,e) => {
+    console.log('orders',customer);
     e.preventDefault();
+    if(customer.data.orders){
+    setId(customer);
     setOrders(customer.data.orders)
-    setdetailOpen(true)
-
- //removeHandler( orders);
-    console.log('orders',customer.data.orders);
+    setDetailOpen(true)
+    }
+    else{
+      alert('Your Cart is empty')
+    }
   }
 
-  const removeHandler = (data) => {
-    console.log(data);
-    // data.filter((items) => {
-    //   console.log(items)
-    // })
-  //   data.map((item, index) => {
-  //     console.log('hiiiii');
-  //   // db.ref(`/dummydata/customers/${item}/orders/${index}`).remove()
-  // })
-  //    reference.on('value', (snapshot) => {
-  //   //  return this.http.delete(`https://admin-dashboard-1e2ed-default-rtdb.firebaseio.com/dummydata/customers/${item}/orders/${index}.json`).subscribe();
-  //   console.log(snapshot.val().customers[item].orders[index]); 
-  //   return snapshot.val().customers[item].orders[index].update(null)
-  //   });
-  //   const data =  reference.child('customers').child(item).child('cartID');
-  //    console.log("hrllo0", data);
-  //   reference.child('customers').child(`${item}`).child('cartID').remove()
-  //   console.log(item)
-  //   const ref = db.collection('dummydata').doc(item) ;
-  //   console.log(ref)
-  //   firebase.child(item).removeValue()
-  //   item.delete().then(() => {
-  //     console.log("Document successfully deleted!");
-  // }).catch((error) => {
-  //     console.error("Error removing document: ", error);
-  // });; 
-  }
+
+ 
+
+  
 
 
   const order_headers = {
+    "ID": 'id',
     "Item":"itemID",
     "Quantity":"quantity",
     "Price":"itemPrice",
+    
   }
 
   return (
@@ -89,19 +73,48 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
               {/* Row */}
               { 
                 data && data.map((result,index)=>(
-                  <tr key={index}>
-                    { 
-                      Object.keys(headers).map(column=>(
-                        <td className="p-2" key={column}>
-                          <div className="text-gray-800">{result.data[headers[column]]}</div>
-                        </td> 
-                      ))
+                  console.log(result, 'somsr'),
+                  <tr key={index} className="text-gray-800">
+                    
+                    {
+                      <td className='p-2'>{result.data['userID']}</td>
                     }
+                    {
+                      <td className='p-2'>{result.data['cartID']}</td>
+                    }
+                    {
+                      <td className='p-2'>{result.data['inTime']}</td>
+                    }
+                    {
+                      <td className='p-2'>{result.data['outTime']}</td>
+                    }
+                    {
+                      <td className='p-2'>{result.data['status'] === 'Active'? ( 
+                      <div className="indicator pl-4">
+                        <span className="indicator-item badge badge-sm badge-success"></span>
+                      </div> ) : (
+                        <div className="pl-4 indicator">
+                        <span className="indicator-item badge badge-stone-500 badge-sm"></span> 
+                        
+                      </div>
+                      )}
+                      </td>
+                    }
+                    {
+                      <td className='p-2'>{result.data['totalQty']}</td>
+                    }
+                    {
+                      <td className='p-2'>{result.data['totalPrice']}</td>
+                    }
+                    
+                   
+                    
+                  
                     { hasActions &&
                       <td>
                         <button 
                             onClick={(e)=>handleShowDetails(result,e)}
-                            className="btn px-2 py-1 bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none">
+                            className="btn px-1 py-1 bg-indigo-500 hover:bg-indigo-600 btn-md text-white focus:outline-none">
                               View Details
                           </button> 
                       </td>
@@ -126,7 +139,7 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
             </tbody>
           </table>
           { orders &&
-            <DetailModal removeHandler={removeHandler} orders={orders} setOrders={setOrders} setOpen={detailOpen} setClose={()=>setdetailOpen(false)} data={orders} headers={order_headers}/>
+            <DetailModal setDetailOpen={setDetailOpen} detailOpen={detailOpen}  id={id} setOrders={setOrders} setOpen={detailOpen} setClose={()=>setDetailOpen(false)} data={orders} headers={order_headers}/>
           }
         </div>
       </div>

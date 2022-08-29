@@ -1,16 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Transition from '../../utils/Transition.js';
-import DashboardCard07 from '../dashboard/DashboardCard07.js';
 import DetailTable from './DetailTable.js';
 
-function DetailModal({setOpen,setClose,data,headers , removeHandler , orders, setOrders}) {
+function DetailModal({setOpen,setClose,data,headers, id,}) {
 
   const [detailOpen, setdetailOpen] = useState(false);
   
-  const trigger = useRef(null);
+
   const detailContent = useRef(null);
-  const searchInput = useRef(null);
+
 
   useEffect(()=>{
     if(setOpen){
@@ -25,14 +23,14 @@ function DetailModal({setOpen,setClose,data,headers , removeHandler , orders, se
   },[detailOpen])
 
   // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }) => {
-      if (!detailOpen || detailContent.current.contains(target)) return;
-      setdetailOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
+  // useEffect(() => {
+  //   const clickHandler = ({ target }) => {
+  //     if ( detailContent.current.contains(target)) return;
+  //     setdetailOpen(false);
+  //   };
+  //   document.addEventListener('click', clickHandler);
+  //   return () => document.removeEventListener('click', clickHandler);
+  // });
 
   // close if the esc key is pressed
   useEffect(() => {
@@ -75,7 +73,7 @@ function DetailModal({setOpen,setClose,data,headers , removeHandler , orders, se
         <div className="bg-white overflow-auto max-w-2xl w-full max-h-full rounded shadow-lg" ref={detailContent}>
             {
                 data && data.length > 0 ?
-                <DetailTable label="Order Details" orders={orders} setOrders={setOrders} removeHandler={removeHandler} headers={headers} data={data} isLoading={false}/>
+                <DetailTable label="Order Details"  id={id} detailContent={detailContent} detailOpen={detailOpen} setDetailOpen={setdetailOpen}  headers={headers} data={data} isLoading={false}/>
                 :
                 "No Data Found"
             }

@@ -1,17 +1,21 @@
 import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/auth";
-import "firebase/firestore";
+import  "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD3KDLb7tNgxyudTHdgxzC-Pk0dsWNK6yQ",
-  authDomain: "admin-dashboard-1e2ed.firebaseapp.com",
-  projectId: "admin-dashboard-1e2ed",
-  storageBucket: "admin-dashboard-1e2ed.appspot.com",
-  messagingSenderId: "1059586277528",
-  appId: "1:1059586277528:web:7df44ac7fa8a22e84510ed"
+  apiKey: "AIzaSyDp-KZ6mW40EPpy48kYqg2mcxjL8olzi7E",
+  authDomain: "dashboard-57331.firebaseapp.com",
+  projectId: "dashboard-57331",
+  storageBucket: "dashboard-57331.appspot.com",
+  messagingSenderId: "978966435775",
+  appId: "1:978966435775:web:c5890ce905495f4894330a"
 };
 
+// firebase().firestore().settings({
+//   experimentalForceLongPolling: true, // this line
+//   useFetchStreams: false, // and this line
+// })
 
 firebase.initializeApp(firebaseConfig)
 const secondaryFirebase = firebase.initializeApp(firebaseConfig, "Secondary")
