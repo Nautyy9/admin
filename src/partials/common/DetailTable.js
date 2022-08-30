@@ -6,43 +6,91 @@ import { firebase } from "../../initFirebase"
 const db = firebase.database();
  // <-- import styles to be used
 
+ var token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOjg4MDAzNTA5NjEsInVzZXJfaWQiOiI2MmY3MzU4ZjQ0NzgwY2JhNTE0MzMzYTgiLCJuYW1lIjoiTmVlcmFqIiwidXNlcl90eXBlIjoiSVQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjYwMzY4OTkzLCJleHAiOjE2NjI5NjA5OTMsImp0aSI6Ijg1MzUyMWEzLTJhZGMtNGZhYy04NTZiLTliNDQ2NmIwYWNlMSJ9.Jwx36CATTla59t6QFz2u-97Z8welBZe3Ci3DOJzeQPY'
 
 function DetailTable({label,headers,data,isLoading , id  ,detailOpen, setDetailOpen, detailContent}) {
 
 const [values, setValues] = useState([]);
 const [check, setCheck] = useState(false);
 const [index, setIndex] = useState(0)
+const[input, setInput] = useState('')
+const[apiData, setApiData] = useState()
+const[something, setSomething] = useState(false)
+
 
 
 useEffect(() =>{
   setValues(data);
+  async function getData () {
+    const response = await fetch('http://api.djtretailers.com/collection/getsingleitem?search=barcode&value=300120', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    const data = await response.json()
+    console.log('data from api',data); 
+
+    setApiData(data)
+  }
+  getData();
+  return () => {
+    getData();
+    setValues();
+  }
 }, [data])
 
-function handleIds(id){
-  console.log(id);
+const getDataAfterRemove =(data, index) =>{
+  const val =  db.ref(`/dummydata/customers/${data.id}/orders/`)
+  val.on('value',(snapshot) => {
+    const data =  snapshot.val();
+    console.log(data);
+  })
+} 
+
+
+const removeHandler = (data, index,e) => {
+  e.preventDefault();
+  const order = values.splice(index, 1);
+  setValues(order)
+  console.log(values, 'splice');
+  alert('Data updated successfully')
+  db.ref(`/dummydata/customers/${data.id}/orders/`).update(values);
+  setDetailOpen(false)
+  getDataAfterRemove(data, index)
+
 }
 
-const removeHandler = (data, id,e) => {
-  e.preventDefault();
-  alert('Data updated successfully')
-  setDetailOpen(false)
-  db.ref(`/dummydata/customers/${data.id}/orders/${id}/`).remove()
-  handleIds(id)
+const addInputs = (e) => {
+  e.preventDefault()
+  setSomething(true)
+  setValues([...values,{itemID: apiData.data[0].name, itemPrice : apiData.data[0].warehouses[0].ASP, quantity: '', }]);
+  setCheck(true)
 }
 
 const addHandler= (id) =>{
   setIndex(id)
-  setValues([...values,{id : id,itemID: '',itemPrice :'', quantity: '', }])
+  setValues([...values,{itemID: '',itemPrice :'', quantity: '', }]);
+  console.log (values)
   setCheck(true);
+}
+
+function changeInput(e) {
+  e.preventDefault()
+  setInput(e.target.value)
 }
 
   return (
     <div className="col-span-full xl:col-span-8 bg-white shadow-lg rounded-sm border border-gray-200">
-      <header className="flex items-center justify-between  px-5 py-4 border-b border-gray-100">
-        <h2 className="font-semibold text-gray-800">{label}</h2>
+      <header className="flex items-center justify-between   px-5 py-4 border-b border-gray-100">
+        <h2 className="font-semibold text-gray-800">{label  }</h2> 
+        {!check && <><h4 className=' text-green-600  p-2 border-green-200 rounded-lg ' >{`Add Bar Code -->`}</h4>
+          <input type='text' value={input} onChange={(e) => changeInput(e)}  className=' w-32 h-10'></input> 
+          <button type='button' className='text-3xl mr-32 rounded-full border-black  text-green-900   ' onClick={(e) => addInputs(e)}>
+           + </button>
+        </>}
         <button type='button' className='p-1 m-1 animate-pulse btn-sm rounded-2xl btn hover:bg-white ease  bg-white shadow-none text-red-500 border-none ' onClick={() => setDetailOpen(false)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 " fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>  
+        </button>
       </header>
       {
         isLoading &&
@@ -56,14 +104,17 @@ const addHandler= (id) =>{
            {/* Table header */}
             <thead className="text-xs uppercase text-gray-400 bg-gray-50 rounded-sm">
               <tr>
-                {
-                  Object.keys(headers).map(header=>(
-              
-                    <th className="p-1" key={header}>
-                      <div  className="font-semibold text-center">{header}</div>
+                
+                 
+                    <th className="p-1">
+                      <div  className="font-semibold text-center">Item</div>
                     </th>
-                  ))
-                }
+                    <th className="p-1">
+                      <div  className="font-semibold text-center">Quantity</div>
+                    </th> <th className="p-1">
+                      <div  className="font-semibold text-center">Price</div>
+                    </th> 
+                
                 <th keu='new'>
                    {check? 'Submit' : "Remove Item"}
                 </th>
@@ -77,13 +128,9 @@ const addHandler= (id) =>{
               {/* Row */}
                { 
                 !check && data.map((result,index)=>(
-                  
+                  console.log({result, index},'ksdh'),
                   <>
                   <tr key={index} className="text-center text-gray-800">
-
-                    {
-                      <td>{result.id}</td>
-                    }
                     {
                       <td>{result.itemID}</td>
                     }
@@ -94,8 +141,9 @@ const addHandler= (id) =>{
                       <td>{result.itemPrice}</td>
                     }
                     {
-                      <td className=' '>
-                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, result.id,e)}>
+                      <td className=''>
+                        {console.log(result.id)}
+                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, index,e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6  hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>  
                       </td>
@@ -111,7 +159,7 @@ const addHandler= (id) =>{
                   </>
                 ))
               }
-              {check && <TableInput index={index} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  }
+              {check && <TableInput index={index} addData={something} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  }
               
                 {/* <td className="p-2">
                   <div className="text-center">2.4K</div>

@@ -19,7 +19,7 @@
     "express": "^4.17.1",
     "firebase": "^8.4.1",
     "moment": "^2.29.1",
-    "mqtt": "^4.2.8",
+    "mqtt": "^4.3.7",
     "node-sass": "^5.0.0",
     "notistack": "^1.0.10",
     "postcss": "^8.2.9",

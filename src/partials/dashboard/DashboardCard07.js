@@ -11,7 +11,7 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
   const [id, setId] = useState([]);
 
   const handleShowDetails = (customer,e) => {
-    console.log('orders',customer);
+    //console.log('orders',customer);
     e.preventDefault();
     if(customer.data.orders){
     setId(customer);

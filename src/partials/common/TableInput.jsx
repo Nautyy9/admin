@@ -2,16 +2,20 @@ import React,{useEffect, useState} from 'react'
 import {FaTelegramPlane} from 'react-icons/fa'
 import {AiOutlineMinus} from 'react-icons/ai'
 import {BiArrowBack} from 'react-icons/bi'
-
+import mqtt, { log } from 'mqtt/dist/mqtt'
 import { firebase } from "../../initFirebase"
+
+const host = '15.207.222.251';
+var port = 8083;
+var client;
+var token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOjg4MDAzNTA5NjEsInVzZXJfaWQiOiI2MmY3MzU4ZjQ0NzgwY2JhNTE0MzMzYTgiLCJuYW1lIjoiTmVlcmFqIiwidXNlcl90eXBlIjoiSVQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjYwMzY4OTkzLCJleHAiOjE2NjI5NjA5OTMsImp0aSI6Ijg1MzUyMWEzLTJhZGMtNGZhYy04NTZiLTliNDQ2NmIwYWNlMSJ9.Jwx36CATTla59t6QFz2u-97Z8welBZe3Ci3DOJzeQPY'
 
 const db = firebase.database();
 
-function TableInput( {index, setCheck, id, setValues, values , detailOpen, setDetailOpen, detailContent}) {
+function TableInput( { index, setCheck, id, setValues, values , detailOpen, setDetailOpen, detailContent}) {
   
   const [button, setButton] = useState(false)
-
-  console.log(values)
+  // console.log(values)
 
   //  useEffect(() => {
   //   const clickHandler = ({ target }) => {
@@ -33,10 +37,59 @@ useEffect(() => {
   return () => document.removeEventListener('keydown', keyHandler);
 });
 
+function onConnect() {
+  
+  console.log("Connected");
+  // client.subscribe("admin/cartv1/48b02d5f84a6/added_weight");
+  // client.subscribe("mytopic");
+  client.subscribe("admin/cartv1/48b02d5f84a6/addFromAdmin");
+  const data =  JSON.stringify(Object.assign({}, values))
+  // client.subscribe("admin/cartv1/48b02d5f84a6/na");
+  // client.subscribe("admin/cartv1/48b02d5f84a6/r_label");
+  // client.subscribe("admin/cartv1/isstable");
+  // client.subscribe("admin/cartv1/notstable");
+  client.publish("admin/cartv1/48b02d5f84a6/addFromAdmin",`${data}`); 
+  //set.send("admin/cartv1/token", localStorage.getItem("UserToken"), 0, false)
+  }
+  function onFailure() {
+    console.log("Connection Attempt to Host " + host + "Failed");
+    setTimeout (MQTTConnect,reconnectTimeout);
+  } 
+  function reconnectTimeout () {
+    console.log('Connection Lost');
+    MQTTConnect()
+  }
 
- const goBack =(e,index) =>{
-  if(index )
-    {values.pop()}
+function MQTTConnect () {
+  var x = Math.floor(Math.random() * 10000);
+  var cname = "CartID -" + x;
+     
+  var options = {
+    clientId: cname,
+    reconnect : true, 
+    timeout: 3,
+    onSuccess: onConnect,
+    onFailure: onFailure,
+  };
+  client = mqtt.connect(`mqtt://${host}:${port}/mqtt`,options);
+
+  client.on('connect', () =>{
+    onConnect();
+  })
+  
+  
+}
+
+useEffect(() => {
+  MQTTConnect();
+  return () => {
+    MQTTConnect();
+  }
+},[])
+
+ const goBack =(e) =>{
+  // if(index )
+    values.pop()
     e.preventDefault();
     setCheck(false)
     setDetailOpen(true)
@@ -52,32 +105,33 @@ useEffect(() => {
   const submitHandler =(e, index ,length) =>{
         e.preventDefault();
         
-        if(values[index].id === index && values[index].itemID !== ''  && values[index].itemPrice !== ''  && values[index].quantity !== '') 
+        if( values[index].itemID !== ''  && values[index].itemPrice !== ''  && values[index].quantity !== '') 
         {
-         if(values[length-1].id === length-1 && values[length-1].itemID !== ''  && values[length-1].itemPrice !== ''  && values[length-1].quantity !== '') {
+         if( values[length-1].itemID !== ''  && values[length-1].itemPrice !== ''  && values[length-1].quantity !== '') {
           db.ref(`/dummydata/customers/${id.id}/orders/`).update(values);
           alert('Data added successfully')
           setDetailOpen(false)
           setCheck(false);
+          onConnect();
          }
          else {
           alert('fill values');
           
         console.log(values);}
         }
-        else if(values[index].id === index && values[index].itemID === ''  && values[index].itemPrice === ''  && values[index].quantity === '') 
+        else if(values[index].itemID === ''  && values[index].itemPrice === ''  && values[index].quantity === '') 
         {alert('fields are empty')
          
       }
       else{alert('fill in the required fields')}
       }
-      const changeThis1=(e, key) =>{
-        e.preventDefault();
-        const data = [...values]
-        data[key][e.target.name] = parseInt(e.target.value)
+      // const changeThis1=(e, key) =>{
+      //   e.preventDefault();
+      //   const data = [...values]
+      //   data[key][e.target.name] = parseInt(e.target.value)
        
-        setValues(data);
-      }
+      //   setValues(data);
+      // }
       const changeThis2=(e, key) =>{
         e.preventDefault();
         const data = [...values]
@@ -99,7 +153,7 @@ useEffect(() => {
       const negateValues =(index, e) =>{
         e.preventDefault()
         const orders = [...values];
-        if(orders[index].id === '' || orders[index].itemID === '' || orders[index].itemPrice === '' || orders[index].quantity === '' ) 
+        if(orders[index].itemID === '' || orders[index].itemPrice === '' || orders[index].quantity === '' ) 
         { orders.splice(index, 1)
           setValues(orders)
           setButton(true)
@@ -111,11 +165,13 @@ useEffect(() => {
   return (
     <>
     {
-      values && values.map((result,index)=>(
-        <tr key={index} className="text-center text-gray-800 "> 
-            <td>
+       values.map((result,index)=>(
+        
+        <tr key={index} className="text-center text-gray-800 ">
+        {console.log(result)} 
+            {/* <td>
               <input type='number' placeholder='id' value={result.id}  name='id' disabled className='tshadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e) => changeThis1(e, index)}/>
-            </td>
+            </td> */}
             <td>
               <input type='text' placeholder="Item Name" value={result.itemID} name='itemID' className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ' onChange={(e) => changeThis2(e, index)}/>
             </td>
@@ -141,7 +197,7 @@ useEffect(() => {
       }
       {!button? <tr>
         <td>
-                <button type=' button' id='val' className=' flex flex-col  ml-6 mt-2  hover:text-info  text-center btn-md w-full rounded-md hover:bg-white btn btn-info text-white' onClick={(e)=>goBack(e, index)}>
+                <button type=' button' id='val' className=' flex flex-col  ml-6 mt-2  hover:text-info  text-center btn-md w-full rounded-md hover:bg-white btn btn-info text-white' onClick={(e)=>goBack(e)}>
                     <span className=" "> <BiArrowBack size={26}/></span>GO Back
                 </button>  
             </td>

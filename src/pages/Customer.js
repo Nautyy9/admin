@@ -33,7 +33,7 @@ function Customer({enqueueSnackbar}) {
     const result = []
     console.log('data', data);
     Object.keys(data).map((each, index)=>{
-       console.log('watch ', each)
+      // console.log('watch ', each)
       // console.log(data[each] );
       //  removeHandler(each, index)
       // removeHandler(index)
@@ -43,7 +43,7 @@ function Customer({enqueueSnackbar}) {
         "data":data[each]
       })
     })
-     console.log('check',result)
+    // console.log('check',result)
     
     // console.log(result[0].data.orders[0].itemID);
     // console.log(result[0].id)
@@ -124,7 +124,7 @@ function Customer({enqueueSnackbar}) {
 
   // to compute total quantity and price for every customer
   const computeExtraHeaders = (data) => {
-    console.log(data, 'values');
+    // console.log(data, 'values');
     data.map(each=>{
       
       if(each.data.orders){
