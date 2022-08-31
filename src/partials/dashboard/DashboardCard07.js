@@ -5,36 +5,36 @@ import DetailModal from '../common/DetailModal';
 
 
 
-function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}) {
+function DashboardCard07({ label, headers, data, isLoading, hasActions, action_header }) {
   const [detailOpen, setDetailOpen] = useState(false)
   const [orders, setOrders] = useState([])
   const [id, setId] = useState([]);
 
-  const handleShowDetails = (customer,e) => {
+  const handleShowDetails = (customer, e) => {
     //console.log('orders',customer);
     e.preventDefault();
-    if(customer.data.orders){
-    setId(customer);
-    setOrders(customer.data.orders)
-    setDetailOpen(true)
+    if (customer.data.orders) {
+      setId(customer);
+      setOrders(customer.data.orders)
+      setDetailOpen(true)
     }
-    else{
+    else {
       alert('Your Cart is empty')
     }
   }
 
 
- 
 
-  
+
+
 
 
   const order_headers = {
     "ID": 'id',
-    "Item":"itemID",
-    "Quantity":"quantity",
-    "Price":"itemPrice",
-    
+    "Item": "itemID",
+    "Quantity": "quantity",
+    "Price": "itemPrice",
+
   }
 
   return (
@@ -44,7 +44,7 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
       </header>
       {
         isLoading &&
-        <Loader/>
+        <Loader />
       }
       <div className="p-3">
 
@@ -55,13 +55,13 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
             <thead className="text-xs uppercase text-gray-400 bg-gray-50 rounded-sm">
               <tr>
                 {
-                  Object.keys(headers).map((header, index)=>(
+                  Object.keys(headers).map((header, index) => (
                     <th className="p-2" key={index}>
                       <div className="font-semibold text-left">{header}</div>
                     </th>
                   ))
                 }
-                { hasActions &&
+                {hasActions &&
                   <th className="p-2" >
                     <div className="font-semibold text-left">{action_header}</div>
                   </th>
@@ -76,11 +76,11 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
             {/* Table body */}
             <tbody className="text-sm font-medium divide-y divide-gray-100">
               {/* Row */}
-              { 
-                data && data.map((result,index)=>(
+              {
+                data && data.map((result, index) => (
                   console.log(result, 'somsr'),
                   <tr key={index} className="text-gray-800">
-                    
+
                     {
                       <td className='p-2'>{result.data['userID']}</td>
                     }
@@ -94,14 +94,16 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
                       <td className='p-2'>{result.data['outTime']}</td>
                     }
                     {
-                      <td className='p-2'>{result.data['status'] === 'Active'? ( 
-                      <div className="indicator pl-4">
-                        <span className="indicator-item badge badge-sm badge-success"></span>
-                      </div> ) : (
+                      <td className='p-2'>{result.data['status'] === 'Active' ? (
+                        <div className="indicator pl-4">
+                          <span className="indicator-item badge badge-sm badge-success"></span>
+                        </div>) : result.data['status'] === 'Not-stable' ? (<div className="indicator pl-4">
+                          <span className="indicator-item badge badge-sm badge-error"></span>
+                        </div>) : (
                         <div className="pl-4 indicator">
-                        <span className="indicator-item badge badge-stone-500 badge-sm"></span> 
-                        
-                      </div>
+                          <span className="indicator-item badge badge-stone-500 badge-sm"></span>
+
+                        </div>
                       )}
                       </td>
                     }
@@ -111,33 +113,33 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
                     {
                       <td className='p-2'>{result.data['totalPrice']}</td>
                     }
-                    
-                   
-                    
-                  
-                    { hasActions &&
+
+
+
+
+                    {hasActions &&
                       <td>
-                        <button 
-                            onClick={(e)=>handleShowDetails(result,e)}
-                            className="btn px-1 py-1 bg-indigo-500 hover:bg-indigo-600 btn-md text-white focus:outline-none">
-                              View Details
-                          </button> 
+                        <button
+                          onClick={(e) => handleShowDetails(result, e)}
+                          className="btn px-1 py-1 bg-indigo-500 hover:bg-indigo-600 btn-md text-white focus:outline-none">
+                          View Details
+                        </button>
                       </td>
                     }
                     {
                       <td className='p-2 text-center' >
-                      <a 
-                            href='http://192.168.1.123:6680/html/' alt='cam'
-                            className="btn   pl-6 pr-6 text-center bg-red-500 transition ease-out duration-300  hover:animate-none animate-pulse   hover:bg-red-700 btn-md text-white focus:outline-none">
-                              Live
-                          </a> 
+                        <a
+                          href='http://192.168.1.123:6680/html/' alt='cam'
+                          className="btn   pl-6 pr-6 text-center bg-red-500 transition ease-out duration-300  hover:animate-none animate-pulse   hover:bg-red-700 btn-md text-white focus:outline-none">
+                          Live
+                        </a>
                       </td>
                     }
                   </tr>
                 ))
               }
-              
-                {/* <td className="p-2">
+
+              {/* <td className="p-2">
                   <div className="text-center">2.4K</div>
                 </td>
                 <td className="p-2">
@@ -149,11 +151,11 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
                 <td className="p-2">
                   <div className="text-center text-light-blue-500">4.7%</div>
                 </td> */}
-              
+
             </tbody>
           </table>
-          { orders &&
-            <DetailModal setDetailOpen={setDetailOpen} detailOpen={detailOpen}  id={id} setOrders={setOrders} setOpen={detailOpen} setClose={()=>setDetailOpen(false)} data={orders} headers={order_headers}/>
+          {orders &&
+            <DetailModal setDetailOpen={setDetailOpen} detailOpen={detailOpen} id={id} setOrders={setOrders} setOpen={detailOpen} setClose={() => setDetailOpen(false)} data={orders} headers={order_headers} />
           }
         </div>
       </div>
