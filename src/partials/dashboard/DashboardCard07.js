@@ -97,7 +97,10 @@ function DashboardCard07({label,headers,data,isLoading,hasActions,action_header}
                       <td className='p-2'>{result.data['status'] === 'Active'? ( 
                       <div className="indicator pl-4">
                         <span className="indicator-item badge badge-sm badge-success"></span>
-                      </div> ) : (
+                      </div> ) : result.data['status'] === 'Not-stable' ? ( 
+                      <div className="indicator pl-4">
+                        <span className="indicator-item badge badge-sm badge-error"></span>
+                      </div> ) :(
                         <div className="pl-4 indicator">
                         <span className="indicator-item badge badge-stone-500 badge-sm"></span> 
                         

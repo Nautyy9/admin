@@ -1,8 +1,10 @@
-import React, {  useEffect, useState } from 'react';
+import React, {  useEffect, useMemo, useState } from 'react';
 import Loader from '../../utils/Loader';
 import {FaPlus} from 'react-icons/fa'
 import TableInput from './TableInput';
 import { firebase } from "../../initFirebase"
+import { AiFillCodeSandboxSquare } from 'react-icons/ai';
+import { write } from 'mqtt/dist/mqtt';
 const db = firebase.database();
  // <-- import styles to be used
 
@@ -13,70 +15,81 @@ function DetailTable({label,headers,data,isLoading , id  ,detailOpen, setDetailO
 const [values, setValues] = useState([]);
 const [check, setCheck] = useState(false);
 const [index, setIndex] = useState(0)
-const[input, setInput] = useState('')
 const[apiData, setApiData] = useState()
 const[something, setSomething] = useState(false)
+const [writeData, setWriteData] = useState()
 
-
-
-useEffect(() =>{
-  setValues(data);
+useEffect(() => {
   async function getData () {
-    const response = await fetch('http://api.djtretailers.com/collection/getsingleitem?search=barcode&value=300120', {
+    try{
+    const response = await fetch(`http://api.djtretailers.com/collection/getsingleitem?search=barcode&value=${writeData? writeData: ''}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
     const data = await response.json()
-    console.log('data from api',data); 
-
+    // console.log('data from api',data);
     setApiData(data)
+  }catch{
+    alert('Fields are empty')
+  }
   }
   getData();
   return () => {
     getData();
+  }
+}, [writeData])
+
+
+useEffect(() =>{
+  setValues(data);
+ 
+  return() =>{
     setValues();
   }
-}, [data])
+}, [ data])
 
-const getDataAfterRemove =(data, index) =>{
-  const val =  db.ref(`/dummydata/customers/${data.id}/orders/`)
-  val.on('value',(snapshot) => {
-    const data =  snapshot.val();
-    console.log(data);
-  })
+const getDataAfterRemove =(data, orders) =>{
+
+  db.ref(`/dummydata/customers/${data.id}/orders`).set(orders);
+  
 } 
 
 
-const removeHandler = (data, index,e) => {
+const removeHandler = (data, index, length ,e) => {
   e.preventDefault();
-  const order = values.splice(index, 1);
-  setValues(order)
-  console.log(values, 'splice');
+  const orders = [...values]
+   orders.splice(index, 1);
+  
+  //  console.log(orders, 'splice');
   alert('Data updated successfully')
-  db.ref(`/dummydata/customers/${data.id}/orders/`).update(values);
+  db.ref(`/dummydata/customers/${data.id}/orders/${index}`).remove();
   setDetailOpen(false)
-  getDataAfterRemove(data, index)
-
+  getDataAfterRemove(data, orders)
 }
 
 const addInputs = (e) => {
   e.preventDefault()
   setSomething(true)
+  if(writeData){
   setValues([...values,{itemID: apiData.data[0].name, itemPrice : apiData.data[0].warehouses[0].ASP, quantity: '', }]);
   setCheck(true)
+  setWriteData('')
+  }
+  else{
+    alert('input fields are empty')
+  }
 }
 
 const addHandler= (id) =>{
   setIndex(id)
   setValues([...values,{itemID: '',itemPrice :'', quantity: '', }]);
-  console.log (values)
   setCheck(true);
 }
 
 function changeInput(e) {
-  e.preventDefault()
-  setInput(e.target.value)
+  e.preventDefault();
+  setWriteData(e.target.value)
 }
 
   return (
@@ -84,7 +97,7 @@ function changeInput(e) {
       <header className="flex items-center justify-between   px-5 py-4 border-b border-gray-100">
         <h2 className="font-semibold text-gray-800">{label  }</h2> 
         {!check && <><h4 className=' text-green-600  p-2 border-green-200 rounded-lg ' >{`Add Bar Code -->`}</h4>
-          <input type='text' value={input} onChange={(e) => changeInput(e)}  className=' w-32 h-10'></input> 
+          <input type='text' value={writeData} onChange={(e) => changeInput(e)}  className=' w-32 h-10'></input> 
           <button type='button' className='text-3xl mr-32 rounded-full border-black  text-green-900   ' onClick={(e) => addInputs(e)}>
            + </button>
         </>}
@@ -105,7 +118,9 @@ function changeInput(e) {
             <thead className="text-xs uppercase text-gray-400 bg-gray-50 rounded-sm">
               <tr>
                 
-                 
+                 {
+                    console.log(writeData)
+                 }
                     <th className="p-1">
                       <div  className="font-semibold text-center">Item</div>
                     </th>
@@ -128,7 +143,7 @@ function changeInput(e) {
               {/* Row */}
                { 
                 !check && data.map((result,index)=>(
-                  console.log({result, index},'ksdh'),
+                  {/* console.log({result, index},'ksdh'), */},
                   <>
                   <tr key={index} className="text-center text-gray-800">
                     {
@@ -142,8 +157,8 @@ function changeInput(e) {
                     }
                     {
                       <td className=''>
-                        {console.log(result.id)}
-                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, index,e)}>
+                        {/* {console.log(result.id)} */}
+                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, index, data.length ,e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6  hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>  
                       </td>
@@ -159,7 +174,7 @@ function changeInput(e) {
                   </>
                 ))
               }
-              {check && <TableInput index={index} addData={something} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  }
+              {check && <TableInput writeData={writeData} index={index} addData={something} detailOpen={detailOpen} setDetailOpen={setDetailOpen} detailContent={detailContent} values={values} setCheck={setCheck} setValues={setValues} data ={data} check={check}  id={id}/>  }
               
                 {/* <td className="p-2">
                   <div className="text-center">2.4K</div>

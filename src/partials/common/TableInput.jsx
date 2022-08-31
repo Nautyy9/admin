@@ -12,7 +12,7 @@ var token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOjg4MDAzNTA5NjEsInV
 
 const db = firebase.database();
 
-function TableInput( { index, setCheck, id, setValues, values , detailOpen, setDetailOpen, detailContent}) {
+function TableInput( { writeData,index, setCheck, id, setValues, values , detailOpen, setDetailOpen, detailContent}) {
   
   const [button, setButton] = useState(false)
   // console.log(values)
@@ -28,6 +28,7 @@ function TableInput( { index, setCheck, id, setValues, values , detailOpen, setD
   // },[detailContent, detailOpen]);
 
 useEffect(() => {
+  console.log(writeData);
   const keyHandler = ({ keyCode }) => {
     if (!detailOpen || keyCode !== 27) return;
     setDetailOpen(false);
