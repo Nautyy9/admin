@@ -1,6 +1,3 @@
-
-
-
 import React, {  useEffect, useState } from 'react';
 import Loader from '../../utils/Loader';
 import {FaPlus} from 'react-icons/fa'
@@ -11,7 +8,7 @@ const db = firebase.database();
 
  var token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOjg4MDAzNTA5NjEsInVzZXJfaWQiOiI2MmY3MzU4ZjQ0NzgwY2JhNTE0MzMzYTgiLCJuYW1lIjoiTmVlcmFqIiwidXNlcl90eXBlIjoiSVQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjYwMzY4OTkzLCJleHAiOjE2NjI5NjA5OTMsImp0aSI6Ijg1MzUyMWEzLTJhZGMtNGZhYy04NTZiLTliNDQ2NmIwYWNlMSJ9.Jwx36CATTla59t6QFz2u-97Z8welBZe3Ci3DOJzeQPY'
 
-function DetailTable({label,headers,data,isLoading , id  ,detailOpen, setDetailOpen, detailContent}) {
+function DetailTable({label,data,isLoading , id  ,detailOpen, setDetailOpen, detailContent}) {
 
 const [values, setValues] = useState([]);
 const [check, setCheck] = useState(false);
@@ -29,7 +26,7 @@ useEffect(() => {
       }
     })
     const data = await response.json()
-    // console.log('data from api',data);
+     console.log('data from api',data);
     setApiData(data)
   }catch{
     alert('Fields are empty')
@@ -57,7 +54,7 @@ const getDataAfterRemove =(data, orders) =>{
 } 
 
 
-const removeHandler = (data, index, length ,e) => {
+const removeHandler = (data, index, e) => {
   e.preventDefault();
   const orders = [...values]
    orders.splice(index, 1);
@@ -72,13 +69,21 @@ const removeHandler = (data, index, length ,e) => {
 const addInputs = (e) => {
   e.preventDefault()
   setSomething(true)
-  if(writeData){
-  setValues([...values,{itemID: apiData.data[0].name, itemPrice : apiData.data[0].warehouses[0].ASP, quantity: '', }]);
-  setCheck(true)
-  setWriteData('')
+  if(writeData && writeData.length >= 5 && apiData){
+    setValues([...values,{itemID: apiData.data[0].name, itemPrice : apiData.data[0].warehouses[0].ASP, quantity: '', }]);
+    setCheck(true)
+    setWriteData('')
   }
-  else{
-    alert('input fields are empty')
+  else if(!writeData){
+    setCheck(false)
+    alert('input fields are empty');
+
+  }
+  else if(writeData && writeData.length>=5 && !apiData){
+    alert('Barcode could not be found . Please Try Again!! ')
+  }
+  else {
+    alert("Barcode length must be of atleast 5 characters")
   }
 }
 
@@ -118,10 +123,6 @@ function changeInput(e) {
            {/* Table header */}
             <thead className="text-xs uppercase text-gray-400 bg-gray-50 rounded-sm">
               <tr>
-                
-                 {
-                    console.log(writeData)
-                 }
                     <th className="p-1">
                       <div  className="font-semibold text-center">Item</div>
                     </th>
@@ -159,7 +160,7 @@ function changeInput(e) {
                     {
                       <td className=''>
                         {/* {console.log(result.id)} */}
-                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, index, data.length ,e)}>
+                        <button type='button' className='p-1 m-1 btn-sm rounded-2xl bg-red-600 btn hover:bg-white hover:text-red-500 border-none text-white' onClick={(e)=>removeHandler(id, index,e)}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6  hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>  
                       </td>

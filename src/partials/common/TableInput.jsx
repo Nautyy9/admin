@@ -28,7 +28,7 @@ function TableInput( { writeData,index, setCheck, id, setValues, values , detail
   // },[detailContent, detailOpen]);
 
 useEffect(() => {
-  console.log(writeData);
+  // console.log(writeData);
   const keyHandler = ({ keyCode }) => {
     if (!detailOpen || keyCode !== 27) return;
     setDetailOpen(false);
@@ -44,12 +44,15 @@ function onConnect() {
   // client.subscribe("admin/cartv1/48b02d5f84a6/added_weight");
   // client.subscribe("mytopic");
   client.subscribe("admin/cartv1/48b02d5f84a6/addFromAdmin");
-  const data =  JSON.stringify(Object.assign({}, values))
+   const data = [...values] 
+   const lastElem = data.pop();
+   const elem =  JSON.stringify(lastElem)
+  // const data =  JSON.stringify(Object.assign({}, values))
   // client.subscribe("admin/cartv1/48b02d5f84a6/na");
   // client.subscribe("admin/cartv1/48b02d5f84a6/r_label");
   // client.subscribe("admin/cartv1/isstable");
   // client.subscribe("admin/cartv1/notstable");
-  client.publish("admin/cartv1/48b02d5f84a6/addFromAdmin",`${data}`); 
+  client.publish("admin/cartv1/48b02d5f84a6/addFromAdmin",`${elem}`); 
   //set.send("admin/cartv1/token", localStorage.getItem("UserToken"), 0, false)
   }
   function onFailure() {
@@ -169,7 +172,7 @@ useEffect(() => {
        values.map((result,index)=>(
         
         <tr key={index} className="text-center text-gray-800 ">
-        {console.log(result)} 
+        {/* {console.log(result)}  */}
             {/* <td>
               <input type='number' placeholder='id' value={result.id}  name='id' disabled className='tshadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e) => changeThis1(e, index)}/>
             </td> */}
